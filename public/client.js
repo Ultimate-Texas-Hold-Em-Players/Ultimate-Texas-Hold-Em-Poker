@@ -3,39 +3,40 @@ const faces = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 // Suit icons
 const suits =["C", "D", "H", "S"];
 const suitIcons = {C: "&clubs;", D: "&diams;", H: "&hearts;", S: "&spades;"};
+// HTML card hand constants
+const PLAYER = "playerHand";
+const DEALER = "dealerHand";
+const COMMUNITY = "communityCards";
 
 // Keep track of hands and cards not in deck
 let usedCards = {};
-let hand = {
-    dealer: [],
-    player: []
-};
+let hand = {};
 
 function resetDeck() {
-    let dealerEle = document.getElementById("dealerHand");
-    let playerEle = document.getElementById("playerHand");
+    let dealerEle = document.getElementById(DEALER);
+    let playerEle = document.getElementById(PLAYER);
+    let communityEle = document.getElementById(COMMUNITY);
     dealerEle.innerHTML = "";
     playerEle.innerHTML = "";
-    hand.dealer = [];
-    hand.player = [];
+    communityEle.innerHTML = "";
+    hand[DEALER] = [];
+    hand[PLAYER] = [];
+    hand[COMMUNITY] = [];
     usedCards = {};
     for (let i=0; i<faces.length; i++) {
         usedCards[faces[i]] = [];
     }
 }
 
-function showEmptyCards(player) {
+function showEmptyCards(owner, num) {
     /*
     Display hand of unknown cards
-    :param player: bool of player or dealer
+    :param owner: player, dealer or community
+    :param num: number of cards to generate
     */
-    let eleId = "dealerHand";
-    if (player) {
-        eleId = "playerHand";
-    }
-    let ele = document.getElementById(eleId);
-    for (let i=0; i<5; i++) {
-        let card = newCard(player);
+    let ele = document.getElementById(owner);
+    for (let i=0; i<num; i++) {
+        let card = newCard(owner);
         ele.appendChild(card);
     }
     console.log("Used cards:", usedCards);
@@ -51,7 +52,7 @@ function revealCard(player, face, suit) {
     */
 }
 
-function newCard(player) {
+function newCard(owner) {
     /*
     Generate a new card from deck
     */
@@ -69,12 +70,8 @@ function newCard(player) {
 
     // Update cards
     usedCards[faces[f]].push(suits[s]);
-    if (player) {
-        hand.player.push([faces[f], suits[s]]);
-    } else {
-        hand.dealer.push([faces[f], suits[s]]);
-    }
-
+    hand[owner].push([faces[f], suits[s]]);
+    
     let card = getCardHTML(faces[f], suits[s]);
     return card
 }
@@ -87,7 +84,7 @@ function getCardHTML(face, suit) {
     :return: HTML elements
     */
     let card = document.createElement("div");
-    card.setAttribute("class", "card mw-25");
+    card.setAttribute("class", "card");
 
     let top = document.createElement("div");
     top.setAttribute("class", "card-body text-left");
@@ -99,17 +96,22 @@ function getCardHTML(face, suit) {
     bottom.setAttribute("class", "card-body text-left");
     bottom.innerHTML = `<h5 class="card-text rotated">${face} ${suitIcons[suit]}</h5>`;
 
-    card.appendChild(top);
-    card.appendChild(middle);
-    card.appendChild(bottom);
+    let wrapper = document.createElement("div");
+    wrapper.setAttribute("class", "col")
+    wrapper.appendChild(top);
+    wrapper.appendChild(middle);
+    wrapper.appendChild(bottom);
+
+    card.appendChild(wrapper);
 
     return card
 }
 
 function setup() {
     resetDeck();
-    showEmptyCards(true);
-    showEmptyCards(false);
+    showEmptyCards(PLAYER, 2);
+    showEmptyCards(DEALER, 2);
+    showEmptyCards(COMMUNITY, 5);
 }
 
 window.onload = setup;

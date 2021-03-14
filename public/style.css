@@ -1,7 +1,6 @@
 .rotated {
     transform: rotate(-180deg);
   
-    /* Legacy vendor prefixes that you probably don't need... */
     /* Safari */
     -webkit-transform: rotate(-180deg);
     /* Firefox */
