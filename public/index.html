@@ -17,29 +17,54 @@
     <p>Look at these nice cards</p>
 </div>
 
-<div class="container text-center">
+<div class="container bg-success m-5 p-5 rounded text-light">
     <div class="row">
-        <div class="col">
-            <h2>Community Cards</h2>
-            <div class="card-deck" id="communityCards">
+        <div class="col" id="infoTable">
+            <p class="bg-warning p-3 rounded">
+            TRIPS PAYOUT<br>
+            ROYAL FLUSH.....................50 to 1<br>
+            STRAIGHT FLUSH...............40 to 1<br>
+            QUADS....................................30 to 1<br>
+            FULL HOUSE...........................8 to 1<br>
+            FLUSH.......................................6 to 1<br>
+            STRAIGHT................................5 to 1<br>
+            TRIPS.........................................3 to 1
+            </p>
+
+            <p class="bg-warning p-3 rounded">
+            BLIND PAYOUT<br>
+            ROYAL FLUSH....................500 to 1<br>
+            STRAIGHT FLUSH................50 to 1<br>
+            QUADS....................................10 to 1<br>
+            FULL HOUSE...........................3 to 1<br>
+            FLUSH.......................................3 to 2<br>
+            STRAIGHT.................................1 to 1<br>
+            OTHER HANDS........................Push
+            </p>
+        </div>
+        <div class="col" id="cardTable">
+            <div class="row px-5 py-3 bg-danger rounded">
+                <div class="col">
+                    <h2>Dealer Hand</h2>
+                    <div class="card-deck" id="dealerHand"></div>
+                </div>
+            </div>
+            <div class="row mt-3 px-5 py-3 bg-danger rounded">
+                <div class="col">
+                    <h2>Community Cards</h2>
+                    <div class="card-deck" id="communityCards"></div>
+                </div>
+            </div>
+            <div class="row mt-3 px-5 py-3 bg-danger rounded">
+                <div class="col">
+                    <h2>Player Hand</h2>
+                    <div class="card-deck" id="playerHand"></div>
+                </div>
             </div>
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col">
-            <h2>Dealer Hand</h2>
-            <div class="card-deck" id="dealerHand">
-            </div>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col">
-            <h2>Player Hand</h2>
-            <div class="card-deck" id="playerHand"></div>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col">
+        <div class="col text-center">
             <h2>Control Panel</h2>
             <button class="btn btn-outline-secondary" type="button" onclick="setup()">Reset Cards</button>
         </div>
