@@ -83,18 +83,23 @@ function getCardHTML(face, suit) {
     :param suit: string of suit value
     :return: HTML elements
     */
+    let colour = "";
+    if (suit == 'H' || suit == 'D') {
+        colour = " text-danger";
+    }
+
     let card = document.createElement("div");
     card.setAttribute("class", "card");
 
     let top = document.createElement("div");
     top.setAttribute("class", "card-body text-left text-dark");
-    top.innerHTML = `<h5 class="card-text">${face} ${suitIcons[suit]}</h5>`;
+    top.innerHTML = `<h5 class="card-text${colour}">${face} ${suitIcons[suit]}</h5>`;
     let middle = document.createElement("div");
     middle.setAttribute("class", "card-body text-center text-dark");
-    middle.innerHTML = `<h1 class="card-text">${suitIcons[suit]}</h1>`;
+    middle.innerHTML = `<h1 class="card-text${colour}">${suitIcons[suit]}</h1>`;
     let bottom = document.createElement("div");
     bottom.setAttribute("class", "card-body text-left text-dark");
-    bottom.innerHTML = `<h5 class="card-text rotated">${face} ${suitIcons[suit]}</h5>`;
+    bottom.innerHTML = `<h5 class="card-text${colour} rotated">${face} ${suitIcons[suit]}</h5>`;
 
     let wrapper = document.createElement("div");
     wrapper.setAttribute("class", "col")
