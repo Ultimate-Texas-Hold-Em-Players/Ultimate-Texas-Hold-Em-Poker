@@ -12,15 +12,14 @@
 </head>
 <body>
 
-<div class="jumbotron text-center">
-    <h1>This is our nice poker game</h1>
-    <p>Look at these nice cards</p>
-</div>
-
-<div class="container bg-success m-5 p-5 rounded text-light">
+<div class="container-fluid p-5 rounded text-light" style="background-color: #9D0208;">
+    <div class="jumbotron text-center" style="background-color: #BD0909;">
+        <h1>This is our nice poker game</h1>
+        <p>Look at these nice cards</p>
+    </div>
     <div class="row">
         <div class="col" id="infoTable">
-            <p class="bg-warning p-3 rounded">
+            <p class="p-3 rounded" style="background-color: #BD0909;">
             TRIPS PAYOUT<br>
             ROYAL FLUSH.....................50 to 1<br>
             STRAIGHT FLUSH...............40 to 1<br>
@@ -31,7 +30,7 @@
             TRIPS.........................................3 to 1
             </p>
 
-            <p class="bg-warning p-3 rounded">
+            <p class="p-3 rounded" style="background-color: #BD0909;">
             BLIND PAYOUT<br>
             ROYAL FLUSH....................500 to 1<br>
             STRAIGHT FLUSH................50 to 1<br>
@@ -43,19 +42,19 @@
             </p>
         </div>
         <div class="col" id="cardTable">
-            <div class="row px-5 py-3 bg-danger rounded">
+            <div class="row px-5 py-3 rounded shadow-sm" style="background-color: #BD0909;">
                 <div class="col">
                     <h2>Dealer Hand</h2>
                     <div class="card-deck" id="dealerHand"></div>
                 </div>
             </div>
-            <div class="row mt-3 px-5 py-3 bg-danger rounded">
+            <div class="row mt-3 px-5 py-3 rounded shadow-sm" style="background-color: #BD0909;">
                 <div class="col">
                     <h2>Community Cards</h2>
                     <div class="card-deck" id="communityCards"></div>
                 </div>
             </div>
-            <div class="row mt-3 px-5 py-3 bg-danger rounded">
+            <div class="row mt-3 px-5 py-3 rounded shadow-sm" style="background-color: #BD0909;">
                 <div class="col">
                     <h2>Player Hand</h2>
                     <div class="card-deck" id="playerHand"></div>
@@ -64,7 +63,7 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col text-center">
+        <div class="col p-3 text-center shadow-sm" style="background-color: #BD0909;">
             <h2>Control Panel</h2>
             <button class="btn btn-outline-secondary" type="button" onclick="setup()">Reset Cards</button>
         </div>
