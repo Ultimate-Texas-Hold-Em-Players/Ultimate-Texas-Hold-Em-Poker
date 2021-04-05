@@ -60,12 +60,20 @@ function revealCard(player, face, suit, index) {
     console.log(children[index]);
 }
 
-function revealPlayer() {
+function deal() {
   console.log(hand[PLAYER][0][0]);
   console.log(hand[PLAYER][0][1]);
   for (let i=0; i<2; i++){
     revealCard(PLAYER, hand[PLAYER][i][0], hand[PLAYER][i][1], i);
   }
+  let secondButton = document.getElementById("second-button");
+  let thirdButton = document.getElementById("third-button");
+  let fourthButton = document.getElementById("fourth-button");
+  let fifthButton = document.getElementById("fifth-button");
+  secondButton.classList.add("hide");
+  thirdButton.classList.remove("hide");
+  fourthButton.classList.remove("hide");
+  fifthButton.classList.remove("hide");
 
 }
 
