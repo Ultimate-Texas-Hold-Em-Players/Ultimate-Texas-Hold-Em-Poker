@@ -8,6 +8,7 @@ const PLAYER = "playerHand";
 const DEALER = "dealerHand";
 const COMMUNITY = "communityCards";
 
+
 // Keep track of hands and cards not in deck
 let usedCards = {};
 let hand = {};
@@ -43,13 +44,29 @@ function showEmptyCards(owner, num) {
     console.log("Hands:", hand);
 }
 
-function revealCard(player, face, suit) {
+function revealCard(player, face, suit, index) {
     /*
     Reveal specific card
     :param player: bool of player or dealer
     :param face: string of face value
     :param suit: string of suit value
     */
+    let children = document.getElementById(PLAYER).childNodes;
+    let cLength = document.getElementById(PLAYER).childNodes.length;
+    console.log(cLength);
+    let card = getCardHTML(face, suit);
+    console.log(card);
+    children[index].innerHTML = card.innerHTML;
+    console.log(children[index]);
+}
+
+function revealPlayer() {
+  console.log(hand[PLAYER][0][0]);
+  console.log(hand[PLAYER][0][1]);
+  for (let i=0; i<2; i++){
+    revealCard(PLAYER, hand[PLAYER][i][0], hand[PLAYER][i][1], i);
+  }
+
 }
 
 function newCard(owner) {
@@ -71,8 +88,8 @@ function newCard(owner) {
     // Update cards
     usedCards[faces[f]].push(suits[s]);
     hand[owner].push([faces[f], suits[s]]);
-    
-    let card = getCardHTML(faces[f], suits[s]);
+
+    let card = getCardHTML(0, 'N');
     return card
 }
 
@@ -83,31 +100,41 @@ function getCardHTML(face, suit) {
     :param suit: string of suit value
     :return: HTML elements
     */
-    let colour = "";
-    if (suit == 'H' || suit == 'D') {
-        colour = " text-danger";
-    }
-
     let card = document.createElement("div");
     card.setAttribute("class", "card");
 
-    let top = document.createElement("div");
-    top.setAttribute("class", "card-body text-left text-dark");
-    top.innerHTML = `<h5 class="card-text${colour}">${face} ${suitIcons[suit]}</h5>`;
-    let middle = document.createElement("div");
-    middle.setAttribute("class", "card-body text-center text-dark");
-    middle.innerHTML = `<h1 class="card-text${colour}">${suitIcons[suit]}</h1>`;
-    let bottom = document.createElement("div");
-    bottom.setAttribute("class", "card-body text-left text-dark");
-    bottom.innerHTML = `<h5 class="card-text${colour} rotated">${face} ${suitIcons[suit]}</h5>`;
 
-    let wrapper = document.createElement("div");
-    wrapper.setAttribute("class", "col")
-    wrapper.appendChild(top);
-    wrapper.appendChild(middle);
-    wrapper.appendChild(bottom);
+    if (suit=='N'){
+      let backSide = document.createElement("IMG");
+      backSide.setAttribute("src", "backSide.png");
+      backSide.setAttribute("width", "190");
+      backSide.setAttribute("height", "228");
+      backSide.setAttribute("alt", "Back Side of Card");
+      let wrapper = document.createElement("div");
+      wrapper.setAttribute("class", "col");
+      wrapper.appendChild(backSide);
+      card.appendChild(wrapper);
+    }
+    else{
+      let top = document.createElement("div");
+      top.setAttribute("class", "card-body text-left text-dark");
+      top.innerHTML = `<h5 class="card-text">${face} ${suitIcons[suit]}</h5>`;
+      let middle = document.createElement("div");
+      middle.setAttribute("class", "card-body text-center text-dark");
+      middle.innerHTML = `<h1 class="card-text">${suitIcons[suit]}</h1>`;
+      let bottom = document.createElement("div");
+      bottom.setAttribute("class", "card-body text-left text-dark");
+      bottom.innerHTML = `<h5 class="card-text rotated">${face} ${suitIcons[suit]}</h5>`;
 
-    card.appendChild(wrapper);
+      let wrapper = document.createElement("div");
+      wrapper.setAttribute("class", "col");
+      wrapper.appendChild(top);
+      wrapper.appendChild(middle);
+      wrapper.appendChild(bottom);
+
+      card.appendChild(wrapper);
+
+    }
 
     return card
 }
