@@ -1,3 +1,71 @@
+/* Importing fonts */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+
+* {
+    font-family: 'Baloo 2', serif;
+}
+
+body {
+    background-color: #9D0208;
+}
+
+table {
+    width: 200px;
+    height: 200px;
+    font-size: 18px;
+    margin: 0px 20px 0px 0px;
+}
+
+th {
+    text-align: center;
+}
+
+.betting {
+    width: 500px;
+    text-align: center;
+    background-color: #BD0909;
+}
+
+.betting #trips {
+    /* align-items: center; */
+    width: 97.5px;
+    height: 97.5px;
+    /* border: 8px solid #FFD60A; */
+    /* box-sizing: border-box; */
+    /* text-align: center; */
+    transform: rotate(-45deg);
+}
+
+#trips div {
+    display: inline-block;
+    text-align: center;
+    /* left: 20px; */
+    /* margin: auto; */
+    /* overflow: hidden; */
+    background-color: purple;
+    transform: rotate(45deg);
+}
+
+#trips, #ante, #blind, #play {
+    border: 8px solid #FFD60A;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#ante, #blind {
+    width: 114px;
+    height: 94px;
+}
+
+#blind {
+    margin-right: 40px;
+}
+
+#play {
+    width: 128px;
+    height: 123px;
+}
+
 .rotated {
     transform: rotate(-180deg);
 
@@ -15,6 +83,10 @@
 
 .card {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    max-width: 190px;
+    max-height: 228px;
+    min-width: 190px;
+    min-height: 228px;
 }
 
 .card:hover {
