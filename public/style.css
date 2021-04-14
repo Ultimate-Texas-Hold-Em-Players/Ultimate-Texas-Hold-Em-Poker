@@ -36,7 +36,6 @@ table {
 input[type="text"]
 {
     background: transparent;
-    /* background: blue; */
     border: none;
     border-bottom: 1px solid white;
     color: white;
@@ -64,17 +63,20 @@ th {
     transform: rotate(-45deg);
 }
 
-#tripsdiv div {
-    display: inline-block;
-    text-align: center;
-    /* left: 20px; */
-    /* margin: auto; */
-    /* overflow: hidden; */
-    transform: rotate(45deg);
+#tripsdiv p {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    margin: 0;
+    transform: translate(-80%, -50%) rotate(45deg);
 }
 
 #tripsdiv #trips {
-    transform: rotate(45deg);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 
@@ -85,7 +87,7 @@ th {
 }
 
 #antediv, #blinddiv {
-    width: 114px;
+    width: 128px;
     height: 94px;
 }
 
@@ -119,6 +121,7 @@ th {
     max-height: 228px;
     min-width: 190px;
     min-height: 228px;
+    margin: 10px 10px 10px 10px;
 }
 
 .card:hover {

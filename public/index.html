@@ -92,11 +92,10 @@
                             </table>
                         </div>
                     </div>
-                    <div class="w-100 betting mt-3 p-2 rounded align-self-center">
-                        <p>
+                    <div class="w-100 betting mt-3 p-2 pl-4 pb-4 rounded align-self-center">
                             <h1>Place Your Bets</h1>
                             <div class="m-3"id="tripsdiv">
-                                <div>Trips</div>
+                                <p>Trips</p>
                                 <input id="trips" type="text" placeholder="Trips Bet" aria-label="Trips Bet"></input>
                             </div>
                             <div class="d-flex justify-content-between" style="box-shadow: none; ">
@@ -117,7 +116,6 @@
                                 <p>Play</p>
                                 <input id="play" type="text" placeholder="Play Bet" aria-label="Play Bet"></input>
                             </div>
-                        </p>
                     </div>
                 </div>
                 <div class="col" id="cardTable">
@@ -145,11 +143,13 @@
     <div class="row mt-3">
         <div class="col p-3 text-center shadow-sm" style="background-color: #BD0909;">
             <h2>Control Panel</h2>
-            <button id="first-button" class="btn btn-default" type="button" onclick="setup()">Reset Cards</button>
-            <button id="second-button" class="btn btn-default" type="button" onclick="deal()">Deal</button>
-            <button id="third-button" class="btn btn-default hide" type="button" onclick="">Check</button>
-            <button id="fourth-button" class="btn btn-default hide" type="button" onclick="">Bet 3x</button>
-            <button id="fifth-button" class="btn btn-default hide" type="button" onclick="">Bet 4x</button>
+            <button id="first-button" class="btn btn-default"type="button" onclick="setup()">Reset Cards</button>
+            <button id="second-button" class="btn btn-default"type="button" onclick="deal()">Deal</button>
+            <button id="third-button" class="btn btn-default hide" type="button" onclick="check()">Check</button>
+            <button id="fourth-button" class="btn btn-default hide" type="button" onclick="bet(3)">Bet 3x</button>
+            <button id="fifth-button" class="btn btn-default hide" type="button" onclick="bet(4)">Bet 4x</button>
+            <button id="sixth-button" class="btn btn-default hide" type="button" onclick="bet(1)">Bet</button>
+            <button id="seventh-button" class="btn btn-default hide" type="button" onclick="fold()">Fold</button>
         </div>
     </div>
 </div>

@@ -7,11 +7,22 @@ const suitIcons = {C: "&clubs;", D: "&diams;", H: "&hearts;", S: "&spades;"};
 const PLAYER = "playerHand";
 const DEALER = "dealerHand";
 const COMMUNITY = "communityCards";
+// HTML element constants
+const RESET_BUTTON = "first-button";
+const DEAL_BUTTON = "second-button";
+const CHECK_BUTTON = "third-button";
+const BET3_BUTTON = "fourth-button";
+const BET4_BUTTON = "fifth-button";
+// Status constants
+const CHECK0 = "0";
+const CHECK3 = "1";
+const CHECK5 = "2";
 
 
 // Keep track of hands and cards not in deck
 let usedCards = {};
 let hand = {};
+let communityStatus = CHECK0;
 
 function resetDeck() {
     let dealerEle = document.getElementById(DEALER);
@@ -51,8 +62,8 @@ function revealCard(player, face, suit, index) {
     :param face: string of face value
     :param suit: string of suit value
     */
-    let children = document.getElementById(PLAYER).childNodes;
-    let cLength = document.getElementById(PLAYER).childNodes.length;
+    let children = document.getElementById(player).childNodes;
+    let cLength = document.getElementById(player).childNodes.length;
     console.log(cLength);
     let card = getCardHTML(face, suit);
     console.log(card);
@@ -66,14 +77,33 @@ function deal() {
   for (let i=0; i<2; i++){
     revealCard(PLAYER, hand[PLAYER][i][0], hand[PLAYER][i][1], i);
   }
-  let secondButton = document.getElementById("second-button");
-  let thirdButton = document.getElementById("third-button");
-  let fourthButton = document.getElementById("fourth-button");
-  let fifthButton = document.getElementById("fifth-button");
+  let secondButton = document.getElementById(DEAL_BUTTON);
+  let thirdButton = document.getElementById(CHECK_BUTTON);
+  let fourthButton = document.getElementById(BET3_BUTTON);
+  let fifthButton = document.getElementById(BET4_BUTTON);
+
   secondButton.classList.add("hide");
   thirdButton.classList.remove("hide");
   fourthButton.classList.remove("hide");
   fifthButton.classList.remove("hide");
+
+}
+
+function check() {
+    // If called once, reveal first 3
+    // If called before, reveal last 2
+
+}
+
+function bet(multiplier) {
+    
+}
+
+function fold() {
+    
+}
+
+function revealRest() {
 
 }
 
@@ -98,7 +128,7 @@ function newCard(owner) {
     hand[owner].push([faces[f], suits[s]]);
 
     let card = getCardHTML(0, 'N');
-    return card
+    return card;
 }
 
 function getCardHTML(face, suit) {
@@ -120,6 +150,7 @@ function getCardHTML(face, suit) {
       backSide.setAttribute("alt", "Back Side of Card");
       let wrapper = document.createElement("div");
       wrapper.setAttribute("class", "col");
+      wrapper.style.padding = 0;
       wrapper.appendChild(backSide);
       card.appendChild(wrapper);
     }
