@@ -5,9 +5,26 @@
     font-family: 'Baloo 2', serif;
 }
 
+.nospace {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: #9D0208;
 }
+
+.btn-default
+{
+  background-color: #E6BF00;
+  color:#FFF;
+}
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
+
+  background-color: transparent;
+  color: #FFD60A;
+  border-color: #FFD60A;
+ }
 
 table {
     width: 200px;
@@ -53,7 +70,6 @@ th {
     /* left: 20px; */
     /* margin: auto; */
     /* overflow: hidden; */
-    background-color: purple;
     transform: rotate(45deg);
 }
 
