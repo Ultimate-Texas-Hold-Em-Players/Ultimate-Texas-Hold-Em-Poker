@@ -16,6 +16,17 @@ table {
     margin: 0px 20px 0px 0px;
 }
 
+input[type="text"]
+{
+    background: transparent;
+    /* background: blue; */
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    width: 75px;
+    text-align: center;
+}
+
 th {
     text-align: center;
 }
@@ -26,7 +37,7 @@ th {
     background-color: #BD0909;
 }
 
-.betting #trips {
+.betting #tripsdiv {
     /* align-items: center; */
     width: 97.5px;
     height: 97.5px;
@@ -36,7 +47,7 @@ th {
     transform: rotate(-45deg);
 }
 
-#trips div {
+#tripsdiv div {
     display: inline-block;
     text-align: center;
     /* left: 20px; */
@@ -46,22 +57,27 @@ th {
     transform: rotate(45deg);
 }
 
-#trips, #ante, #blind, #play {
+#tripsdiv #trips {
+    transform: rotate(45deg);
+}
+
+
+#tripsdiv, #antediv, #blinddiv, #playdiv {
     border: 8px solid #FFD60A;
     box-sizing: border-box;
     text-align: center;
 }
 
-#ante, #blind {
+#antediv, #blinddiv {
     width: 114px;
     height: 94px;
 }
 
-#blind {
+#blinddiv {
     margin-right: 40px;
 }
 
-#play {
+#playdiv {
     width: 128px;
     height: 123px;
 }
