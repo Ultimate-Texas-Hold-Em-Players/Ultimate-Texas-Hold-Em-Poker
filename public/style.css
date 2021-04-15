@@ -54,12 +54,8 @@ th {
 }
 
 .betting #tripsdiv {
-    /* align-items: center; */
     width: 97.5px;
     height: 97.5px;
-    /* border: 8px solid #FFD60A; */
-    /* box-sizing: border-box; */
-    /* text-align: center; */
     transform: rotate(-45deg);
 }
 
@@ -122,10 +118,21 @@ th {
     min-width: 190px;
     min-height: 228px;
     margin: 10px 10px 10px 10px;
+    justify-content: space-between;
 }
 
 .card:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.rotate-left:hover {
+    -webkit-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+}
+
+.rotate-right:hover {
+    -webkit-transform: rotate(10deg);
+    transform: rotate(10deg);
 }
 
 .hide {
