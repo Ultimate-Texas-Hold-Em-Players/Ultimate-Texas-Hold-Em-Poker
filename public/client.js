@@ -8,6 +8,7 @@ const PLAYER = "playerHand";
 const DEALER = "dealerHand";
 const COMMUNITY = "communityCards";
 // HTML element constants
+const STATUS_BAR = "status";
 const DEAL_BUTTON = "second-button";
 const CHECK_BUTTON = "third-button";
 const BET3_BUTTON = "fourth-button";
@@ -60,6 +61,9 @@ function resetDeck() {
     document.getElementById(BET2_BUTTON).classList.add("hide");
     document.getElementById(BET1_BUTTON).classList.add("hide");
     document.getElementById(FOLD_BUTTON).classList.add("hide");
+
+    // Set status bar
+    document.getElementById(STATUS_BAR).innerHTML = "Press \"Deal\" to Start";
 }
 
 function showEmptyCards(owner, num) {
@@ -112,6 +116,8 @@ function deal() {
     thirdButton.classList.remove("hide");
     fourthButton.classList.remove("hide");
     fifthButton.classList.remove("hide");
+
+    document.getElementById(STATUS_BAR).innerHTML = "Check or Bet?";
 }
 
 function check() {
@@ -137,6 +143,7 @@ function check() {
         document.getElementById(BET2_BUTTON).classList.add("hide");
         document.getElementById(FOLD_BUTTON).classList.remove("hide");
         document.getElementById(BET1_BUTTON).classList.remove("hide");
+        document.getElementById(STATUS_BAR).innerHTML = "Bet or Fold?";
     }
 }
 
@@ -162,6 +169,7 @@ function bet(multiplier) {
 function endRound(multiplier) {
     // TODO: Decide who wins, how much player wins/loses based on the cards
     // multiplier: -1 means fold, rest mean bet times multiplier
+    document.getElementById(STATUS_BAR).innerHTML = "Round has ended. ___ wins! You have won/lost $???";
 }
 
 function revealRest() {
