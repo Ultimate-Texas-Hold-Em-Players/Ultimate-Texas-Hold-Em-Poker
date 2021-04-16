@@ -19,6 +19,9 @@ const FOLD_BUTTON = "eighth-button";
 const CHECK0 = "0";
 const CHECK3 = "1";
 const CHECK5 = "2";
+// CSS card rotation classes
+const ROTATE_LEFT = "rotate-left";
+const ROTATE_RIGHT = "rotate-right";
 
 // Keep track of hands and cards not in deck
 let usedCards = {};
@@ -28,6 +31,11 @@ let communityRevealed = 0; // Last index of revealed cards
 
 
 function resetDeck() {
+    /*
+    Resets the game
+    :param None
+    :return: None
+    */
     let dealerEle = document.getElementById(DEALER);
     let playerEle = document.getElementById(PLAYER);
     let communityEle = document.getElementById(COMMUNITY);
@@ -86,21 +94,31 @@ function revealCard(player, face, suit, index) {
 }
 
 function deal() {
-  console.log(hand[PLAYER][0][0]);
-  console.log(hand[PLAYER][0][1]);
-  revealPlayer(PLAYER);
-  let secondButton = document.getElementById(DEAL_BUTTON);
-  let thirdButton = document.getElementById(CHECK_BUTTON);
-  let fourthButton = document.getElementById(BET3_BUTTON);
-  let fifthButton = document.getElementById(BET4_BUTTON);
-
-  secondButton.classList.add("hide");
-  thirdButton.classList.remove("hide");
-  fourthButton.classList.remove("hide");
-  fifthButton.classList.remove("hide");
+    /*
+    The player is dealt cards
+    :param None
+    :return: None
+    */
+    console.log(hand[PLAYER][0][0]);
+    console.log(hand[PLAYER][0][1]);
+    revealPlayer(PLAYER);
+    let secondButton = document.getElementById(DEAL_BUTTON);
+    let thirdButton = document.getElementById(CHECK_BUTTON);
+    let fourthButton = document.getElementById(BET3_BUTTON);
+    let fifthButton = document.getElementById(BET4_BUTTON);
+    
+    secondButton.classList.add("hide");
+    thirdButton.classList.remove("hide");
+    fourthButton.classList.remove("hide");
+    fifthButton.classList.remove("hide");
 }
 
 function check() {
+    /*
+    Cards/buttons are revealed as the player checks
+    :param None
+    :return: None
+    */
     if (communityStatus == CHECK0) {
         // If no cards checked, check first 3
         communityStatus = CHECK3;
@@ -122,7 +140,11 @@ function check() {
 }
 
 function bet(multiplier) {
-    // Reveal all cards
+    /*
+    Reveals appropriate community cards, adjusts buttons, ends round.
+    :param Multiplier: Bet multiplier; how much the player will win/lose.
+    :return: None
+    */
     revealRest();
     endRound(multiplier);
 
@@ -142,6 +164,11 @@ function endRound(multiplier) {
 }
 
 function revealRest() {
+    /*
+    Reveal all cards
+    :param None
+    :return: None
+    */
     // Reveal all community
     if (communityStatus == CHECK0) {
         // If no cards checked, check all
@@ -156,6 +183,11 @@ function revealRest() {
 }
 
 function revealCommunity(num) {
+    /*
+    Reveals table cards
+    :param num: Number of cards to be revealed
+    :return: None
+    */
     for (let i=communityRevealed; i<Math.min(communityRevealed+num, 5); i++){
         revealCard(COMMUNITY, hand[COMMUNITY][i][0], hand[COMMUNITY][i][1], i);
     }
@@ -163,7 +195,11 @@ function revealCommunity(num) {
 }
 
 function revealPlayer(player) {
-    // Reveal cards of player/dealer
+    /*
+    Reveal cards of player/dealer
+    :param player: string representing player/dealer/community
+    :return: None
+    */
     for (let i=0; i<2; i++){
         revealCard(player, hand[player][i][0], hand[player][i][1], i);
     }
@@ -171,7 +207,9 @@ function revealPlayer(player) {
 
 function newCard(owner) {
     /*
-    Generate a new card from deck
+    Generates a card (not the HTML)
+    :param owner: string representing player/dealer/community
+    :return: None
     */
     let newCard = true;
     let f = 0;
@@ -189,7 +227,7 @@ function newCard(owner) {
     hand[owner].push([faces[f], suits[s]]);
 
     let card = getCardHTML(0, 'N');
-    return card
+    return card;
 }
 
 function getCardHTML(face, suit) {
@@ -200,7 +238,9 @@ function getCardHTML(face, suit) {
     :return: HTML elements
     */
     let card = document.createElement("div");
-    card.setAttribute("class", "card");
+    let rotation = Math.floor(Math.random() * 2);
+    let rotationCSS = rotation ? ROTATE_LEFT : ROTATE_RIGHT;
+    card.setAttribute("class", `card ${rotationCSS}`);
     let colour = "";
     if (suit == 'H' || suit == 'D') {
         colour = " text-danger";
@@ -213,21 +253,28 @@ function getCardHTML(face, suit) {
         backSide.setAttribute("height", "228");
         backSide.setAttribute("alt", "Back Side of Card");
         let wrapper = document.createElement("div");
+        wrapper.style.padding = 0;
         wrapper.setAttribute("class", "col");
         wrapper.appendChild(backSide);
         card.appendChild(wrapper);
     } else {
         let top = document.createElement("div");
         top.setAttribute("class", "card-body text-left text-dark");
-        top.innerHTML = `<h5 class="card-text${colour}">${face} ${suitIcons[suit]}</h5>`;
+        top.style.padding = "20px";
+        top.style.paddingLeft = "15px"
+        top.style.paddingTop = "12px";
+        top.innerHTML = `<h3 class="card-text${colour}">${face} ${suitIcons[suit]}</h3>`;
         let middle = document.createElement("div");
         middle.setAttribute("class", "card-body text-center text-dark");
-        middle.innerHTML = `<h1 class="card-text${colour}">${suitIcons[suit]}</h1>`;
+        middle.innerHTML = `<h1 style="font-size: 60px" class="card-text${colour}">${suitIcons[suit]}</h1>`;
         let bottom = document.createElement("div");
         bottom.setAttribute("class", "card-body text-left text-dark");
-        bottom.innerHTML = `<h5 class="card-text${colour} rotated">${face} ${suitIcons[suit]}</h5>`;
+        bottom.innerHTML = `<h3 class="card-text${colour} rotated">${face} ${suitIcons[suit]}</h3>`;
+        bottom.style.paddingTop = 0;
+        bottom.style.paddingRight = "15px";
 
         let wrapper = document.createElement("div");
+        wrapper.style.padding = 0;
         wrapper.setAttribute("class", "col");
         wrapper.appendChild(top);
         wrapper.appendChild(middle);
@@ -237,10 +284,15 @@ function getCardHTML(face, suit) {
 
     }
 
-    return card
+    return card;
 }
 
 function setup() {
+    /*
+    Initializes the deck and sets up the table.
+    :param None
+    :return: None
+    */
     resetDeck();
     showEmptyCards(PLAYER, 2);
     showEmptyCards(DEALER, 2);

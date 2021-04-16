@@ -1,3 +1,101 @@
+/* Importing fonts */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+
+* {
+    font-family: 'Baloo 2', serif;
+}
+
+.nospace {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #9D0208;
+}
+
+.btn-default
+{
+  background-color: #E6BF00;
+  color:#FFF;
+}
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
+
+  background-color: transparent;
+  color: #FFD60A;
+  border-color: #FFD60A;
+ }
+
+table {
+    width: 200px;
+    height: 200px;
+    font-size: 18px;
+    margin: 0px 20px 0px 0px;
+}
+
+input[type="text"]
+{
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    width: 75px;
+    text-align: center;
+}
+
+th {
+    text-align: center;
+}
+
+.betting {
+    width: 500px;
+    text-align: center;
+    background-color: #BD0909;
+}
+
+.betting #tripsdiv {
+    width: 97.5px;
+    height: 97.5px;
+    transform: rotate(-45deg);
+}
+
+#tripsdiv p {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    margin: 0;
+    transform: translate(-80%, -50%) rotate(45deg);
+}
+
+#tripsdiv #trips {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+
+#tripsdiv, #antediv, #blinddiv, #playdiv {
+    border: 8px solid #FFD60A;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#antediv, #blinddiv {
+    width: 128px;
+    height: 94px;
+}
+
+#blinddiv {
+    margin-right: 40px;
+}
+
+#playdiv {
+    width: 128px;
+    height: 123px;
+}
+
 .rotated {
     transform: rotate(-180deg);
 
@@ -15,10 +113,26 @@
 
 .card {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    max-width: 190px;
+    max-height: 228px;
+    min-width: 190px;
+    min-height: 228px;
+    margin: 10px 10px 10px 10px;
+    justify-content: space-between;
 }
 
 .card:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.rotate-left:hover {
+    -webkit-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+}
+
+.rotate-right:hover {
+    -webkit-transform: rotate(10deg);
+    transform: rotate(10deg);
 }
 
 .hide {
