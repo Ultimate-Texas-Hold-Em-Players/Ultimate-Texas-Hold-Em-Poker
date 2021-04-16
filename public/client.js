@@ -89,6 +89,7 @@ function revealCard(player, face, suit, index) {
     console.log(cLength);
     let card = getCardHTML(face, suit);
     console.log(card);
+    children[index].style.transform = "rotateY(180deg)";
     children[index].innerHTML = card.innerHTML;
     console.log(children[index]);
 }
@@ -275,6 +276,7 @@ function getCardHTML(face, suit) {
 
         let wrapper = document.createElement("div");
         wrapper.style.padding = 0;
+        wrapper.style.transform = "rotateY(180deg)";
         wrapper.setAttribute("class", "col");
         wrapper.appendChild(top);
         wrapper.appendChild(middle);

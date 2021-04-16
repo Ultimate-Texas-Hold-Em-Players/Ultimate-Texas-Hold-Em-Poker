@@ -119,6 +119,7 @@ th {
     min-height: 228px;
     margin: 10px 10px 10px 10px;
     justify-content: space-between;
+    transition: transform 0.2s;
 }
 
 .card:hover {
@@ -128,6 +129,7 @@ th {
 .rotate-left:hover {
     -webkit-transform: rotate(-10deg);
     transform: rotate(-10deg);
+    
 }
 
 .rotate-right:hover {
