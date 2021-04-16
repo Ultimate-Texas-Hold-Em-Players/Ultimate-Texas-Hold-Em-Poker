@@ -127,14 +127,13 @@ th {
 }
 
 .rotate-left:hover {
-    -webkit-transform: rotate(-10deg);
-    transform: rotate(-10deg);
-    
+    -webkit-transform: rotateZ(-10deg);
+    transform: rotateZ(-10deg);
 }
 
 .rotate-right:hover {
-    -webkit-transform: rotate(10deg);
-    transform: rotate(10deg);
+    -webkit-transform: rotateZ(10deg);
+    transform: rotateZ(10deg);
 }
 
 .hide {
