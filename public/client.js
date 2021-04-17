@@ -246,9 +246,13 @@ function getCardHTML(face, suit) {
     :param suit: string of suit value
     :return: HTML elements
     */
-    let card = document.createElement("div");
     let rotation = Math.floor(Math.random() * 2);
     let rotationCSS = rotation ? ROTATE_LEFT : ROTATE_RIGHT;
+
+    let cardWrapper = document.createElement("div");
+    cardWrapper.setAttribute("class", "card-wrapper");
+
+    let card = document.createElement("div");
     card.setAttribute("class", `card ${rotationCSS}`);
 
     let wrapper = document.createElement("div");
@@ -289,7 +293,8 @@ function getCardHTML(face, suit) {
     }
 
     card.appendChild(wrapper);
-    return card;
+    cardWrapper.appendChild(card);
+    return cardWrapper;
 }
 
 function setup() {
