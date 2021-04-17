@@ -8,6 +8,7 @@ const PLAYER = "playerHand";
 const DEALER = "dealerHand";
 const COMMUNITY = "communityCards";
 // HTML element constants
+const STATUS_BAR = "status";
 const DEAL_BUTTON = "second-button";
 const CHECK_BUTTON = "third-button";
 const BET3_BUTTON = "fourth-button";
@@ -60,6 +61,9 @@ function resetDeck() {
     document.getElementById(BET2_BUTTON).classList.add("hide");
     document.getElementById(BET1_BUTTON).classList.add("hide");
     document.getElementById(FOLD_BUTTON).classList.add("hide");
+
+    // Set status bar
+    document.getElementById(STATUS_BAR).innerHTML = "Press \"Deal\" to Start";
 }
 
 function showEmptyCards(owner, num) {
@@ -89,6 +93,7 @@ function revealCard(player, face, suit, index) {
     console.log(cLength);
     let card = getCardHTML(face, suit);
     console.log(card);
+    children[index].style.transform = "rotateY(180deg)";
     children[index].innerHTML = card.innerHTML;
     console.log(children[index]);
 }
@@ -111,6 +116,8 @@ function deal() {
     thirdButton.classList.remove("hide");
     fourthButton.classList.remove("hide");
     fifthButton.classList.remove("hide");
+
+    document.getElementById(STATUS_BAR).innerHTML = "Check or Bet?";
 }
 
 function check() {
@@ -136,6 +143,7 @@ function check() {
         document.getElementById(BET2_BUTTON).classList.add("hide");
         document.getElementById(FOLD_BUTTON).classList.remove("hide");
         document.getElementById(BET1_BUTTON).classList.remove("hide");
+        document.getElementById(STATUS_BAR).innerHTML = "Bet or Fold?";
     }
 }
 
@@ -161,6 +169,7 @@ function bet(multiplier) {
 function endRound(multiplier) {
     // TODO: Decide who wins, how much player wins/loses based on the cards
     // multiplier: -1 means fold, rest mean bet times multiplier
+    document.getElementById(STATUS_BAR).innerHTML = "Round has ended. ___ wins! You have won/lost $???";
 }
 
 function revealRest() {
@@ -237,10 +246,19 @@ function getCardHTML(face, suit) {
     :param suit: string of suit value
     :return: HTML elements
     */
-    let card = document.createElement("div");
     let rotation = Math.floor(Math.random() * 2);
     let rotationCSS = rotation ? ROTATE_LEFT : ROTATE_RIGHT;
+
+    let cardWrapper = document.createElement("div");
+    cardWrapper.setAttribute("class", "card-wrapper");
+
+    let card = document.createElement("div");
     card.setAttribute("class", `card ${rotationCSS}`);
+
+    let wrapper = document.createElement("div");
+    wrapper.style.padding = 0;
+    wrapper.setAttribute("class", "col");
+
     let colour = "";
     if (suit == 'H' || suit == 'D') {
         colour = " text-danger";
@@ -252,11 +270,7 @@ function getCardHTML(face, suit) {
         backSide.setAttribute("width", "190");
         backSide.setAttribute("height", "228");
         backSide.setAttribute("alt", "Back Side of Card");
-        let wrapper = document.createElement("div");
-        wrapper.style.padding = 0;
-        wrapper.setAttribute("class", "col");
         wrapper.appendChild(backSide);
-        card.appendChild(wrapper);
     } else {
         let top = document.createElement("div");
         top.setAttribute("class", "card-body text-left text-dark");
@@ -272,19 +286,15 @@ function getCardHTML(face, suit) {
         bottom.innerHTML = `<h3 class="card-text${colour} rotated">${face} ${suitIcons[suit]}</h3>`;
         bottom.style.paddingTop = 0;
         bottom.style.paddingRight = "15px";
-
-        let wrapper = document.createElement("div");
-        wrapper.style.padding = 0;
-        wrapper.setAttribute("class", "col");
+        wrapper.style.transform = "rotateY(180deg)";
         wrapper.appendChild(top);
         wrapper.appendChild(middle);
         wrapper.appendChild(bottom);
-
-        card.appendChild(wrapper);
-
     }
 
-    return card;
+    card.appendChild(wrapper);
+    cardWrapper.appendChild(card);
+    return cardWrapper;
 }
 
 function setup() {
