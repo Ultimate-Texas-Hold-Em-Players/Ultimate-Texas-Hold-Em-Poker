@@ -16,6 +16,11 @@ const BET4_BUTTON = "fifth-button";
 const BET2_BUTTON = "sixth-button";
 const BET1_BUTTON = "seventh-button";
 const FOLD_BUTTON = "eighth-button";
+const ANTE = "ante";
+const BLIND = "blind";
+const PLAY = "play";
+const TRIPS = "trips";
+
 // Status constants
 const CHECK0 = "0";
 const CHECK3 = "1";
@@ -111,7 +116,7 @@ function deal() {
     let thirdButton = document.getElementById(CHECK_BUTTON);
     let fourthButton = document.getElementById(BET3_BUTTON);
     let fifthButton = document.getElementById(BET4_BUTTON);
-    
+
     secondButton.classList.add("hide");
     thirdButton.classList.remove("hide");
     fourthButton.classList.remove("hide");
@@ -126,6 +131,9 @@ function check() {
     :param None
     :return: None
     */
+    //
+    handleInput(0);
+
     if (communityStatus == CHECK0) {
         // If no cards checked, check first 3
         communityStatus = CHECK3;
@@ -153,8 +161,13 @@ function bet(multiplier) {
     :param Multiplier: Bet multiplier; how much the player will win/lose.
     :return: None
     */
+    //
+    handleInput(multiplier);
+    
     revealRest();
     endRound(multiplier);
+
+
 
     // Disable all buttons
     document.getElementById(DEAL_BUTTON).classList.add("hide");
@@ -166,9 +179,40 @@ function bet(multiplier) {
     document.getElementById(FOLD_BUTTON).classList.add("hide");
 }
 
+function handleInput(multiplier){
+  let anteBet =  document.getElementById(ANTE).value;
+  let blindBet =  document.getElementById(BLIND).value;
+  let tripsBet =  document.getElementById(TRIPS).value;
+  if (anteBet!=blindBet){
+    document.getElementById(BLIND).value = anteBet;
+  }
+  document.getElementById(ANTE).classList.add("readonly");
+  document.getElementById(BLIND).classList.add("readonly");
+  document.getElementById(TRIPS).classList.add("readonly");
+
+  if (multiplier==1 || multiplier==2 || multiplier==3 || multiplier==4 ){
+    document.getElementById(PLAY).value = multiplier * anteBet;
+  }
+
+}
+
+function payCalculation() {
+  let anteBet =  document.getElementById(ANTE).value;
+  let blindBet =  document.getElementById(BLIND).value;
+  let playBet =  document.getElementById(PLAY).value;
+  let tripsBet =  document.getElementById(TRIPS).value;
+  console.log(anteBet);
+  console.log(blindBet);
+  console.log(playBet);
+  console.log(tripsBet);
+
+}
+
+
 function endRound(multiplier) {
     // TODO: Decide who wins, how much player wins/loses based on the cards
     // multiplier: -1 means fold, rest mean bet times multiplier
+    payCalculation();
     document.getElementById(STATUS_BAR).innerHTML = "Round has ended. ___ wins! You have won/lost $???";
 }
 
