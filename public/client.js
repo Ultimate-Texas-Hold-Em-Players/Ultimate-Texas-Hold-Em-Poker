@@ -201,14 +201,10 @@ function endRound(multiplier) {
     let winner = "";
 
     // Get best 5 card hand of PLAYER
-    let player_hand_value = findBestHand(PLAYER);
-    let best_player_hand = player_hand_value[0];
-    let best_player_hand_value = player_hand_value[1];
+    let [best_player_hand, best_player_hand_value] = findBestHand(PLAYER);
 
     // Get best 5 card hand of DEALER
-    let dealer_hand_value = findBestHand(DEALER);
-    let best_dealer_hand = dealer_hand_value[0];
-    let best_dealer_hand_value = dealer_hand_value[1];
+    let [best_dealer_hand, best_dealer_hand_value] = findBestHand(DEALER);
 
     // PLAYER vs DEALER
     if (hand_values[best_player_hand_value] > hand_values[best_dealer_hand_value]) {
@@ -231,7 +227,8 @@ function endRound(multiplier) {
 
     let player_payout = getPayout();
 
-    document.getElementById(STATUS_BAR).innerHTML = `Your best hand: _. Dealer's best hand: _. ${winner} wins!\nYou have won/lost $${player_payout}`;
+    document.getElementById(STATUS_BAR).innerHTML = `Your best hand: ${best_player_hand_value.replace("_", " ")}. 
+    Dealer's best hand: ${best_dealer_hand_value.replace("_", " ")}. ${winner} wins! You have won/lost $${player_payout}.`;
 }
 
 function findBestHand(player) {
@@ -242,49 +239,49 @@ function findBestHand(player) {
     */
     let wholeHand = hand[COMMUNITY].concat(hand[player]);
     
-    let royalFlushHand = getRoyalFlush();
-    if (royalFlush) {
-        return (royalFlushHand, "royal_flush");
+    let royalFlushHand = getRoyalFlush(wholeHand);
+    if (royalFlushHand) {
+        return [royalFlushHand, "royal_flush"];
     }
 
-    let straightFlushHand = getStraightFlush();
+    let straightFlushHand = getStraightFlush(wholeHand);
     if (straightFlushHand) {
-        return (straightFlushHand, "straight_flush");
+        return [straightFlushHand, "straight_flush"];
     }
 
-    let quadsHand = getQuads();
+    let quadsHand = getQuads(wholeHand);
     if (quadsHand) {
-        return (quadsHand, "quads");
+        return [quadsHand, "quads"];
     }
 
-    let fullHouse = getFullhouse();
+    let fullHouse = getFullhouse(wholeHand);
     if (fullHouse) {
-        return (fullHouse, "full_house");
+        return [fullHouse, "full_house"];
     }
 
-    let flushHand = getFlush();
+    let flushHand = getFlush(wholeHand);
     if (flushHand) {
-        return (flushHand, "flush");
+        return [flushHand, "flush"];
     }
 
-    let straightHand = getStraight();
+    let straightHand = getStraight(wholeHand);
     if (straightHand) {
-        return (straightHand, "straight");
+        return [straightHand, "straight"];
     }
 
-    let tripleHand = getTriple();
+    let tripleHand = getTriple(wholeHand);
     if (tripleHand) {
-        return (tripleHand, "triple");
+        return [tripleHand, "triple"];
     }
 
-    let twoPair = getTwoPair();
+    let twoPair = getTwoPair(wholeHand);
     if (twoPair) {
-        return (twoPair, "two_pair");
+        return [twoPair, "two_pair"];
     }
 
-    let onePair = getOnePair();
+    let onePair = getOnePair(wholeHand);
     if (onePair) {
-        return (onePair, "one_pair");
+        return [onePair, "one_pair"];
     }
     
     // If lower than a pair
@@ -447,44 +444,56 @@ function getBestFaceValueHand(cards, num) {
 }
 
 function getRoyalFlush(cards) {
-
+    return cards.slice(0, 5);
 }
 
 function getStraightFlush(cards) {
-
+    return cards.slice(0, 5);
 }
 
 function getQuads(cards) {
-
+    return cards.slice(0, 5);
 }
 
 function getFullhouse(cards) {
-
+    return cards.slice(0, 5);
 }
 
 function getFlush(cards) {
-
+    return cards.slice(0, 5);
 }
 
 function getStraight(cards) {
-
+    return cards.slice(0, 5);
 }
 
 function getTriple(cards) {
     /*
-    Checks if a 7-card hand contains a triple
+    Looks for the best 5-card hand with a triple
     :param cards: Object representing a 7-card hand
     :return: Boolean
     */
-    return True
+    /*let bestHand = [];
+
+    // Find all triple values
+    let triples = [];
+
+    // Add best triple cards to hand
+
+    // Find rest of hand based on face value
+    let rest = getBestFaceValueHand();
+
+    return bestHand;*/
+
+    return cards.slice(0, 5);
 }
 
 function getTwoPair(cards) {
-
+    return cards.slice(0, 5);
 }
 
 function getOnePair(cards) {
-
+    return cards.slice(0, 5);
 }
 
 /* End of card outcome helpers */
