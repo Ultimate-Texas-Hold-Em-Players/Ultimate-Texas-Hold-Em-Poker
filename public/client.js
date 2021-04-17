@@ -223,6 +223,9 @@ function endRound(multiplier) {
 
     document.getElementById(STATUS_BAR).innerHTML = `Your best hand: ${best_player_hand_value.replace("_", " ")}. 
     Dealer's best hand: ${best_dealer_hand_value.replace("_", " ")}. ${winner} wins! You have won/lost $${player_payout}.`;
+
+    console.log("player's 5-card hand:", best_player_hand);
+    console.log("dealer's 5-card hand:", best_dealer_hand);
 }
 
 function findBestHand(player) {
@@ -233,6 +236,7 @@ function findBestHand(player) {
     */
     let wholeHand = hand[COMMUNITY].concat(hand[player]);
     wholeHand.sort(compareCards);
+    console.log("sorted whole cards of player ", player, wholeHand)
     
     let royalFlushHand = getRoyalFlush(wholeHand);
     if (royalFlushHand) {
@@ -429,7 +433,7 @@ function getCardHTML(face, suit) {
 /* Card outcome helpers */
 
 function compareCards(c1, c2){
-    return c2[0]-c1[0]
+    return face_values[c2[0]]-face_values[c1[0]];
 }
 
 function getBestFaceValueHand(cards, num) {
