@@ -250,6 +250,11 @@ function getCardHTML(face, suit) {
     let rotation = Math.floor(Math.random() * 2);
     let rotationCSS = rotation ? ROTATE_LEFT : ROTATE_RIGHT;
     card.setAttribute("class", `card ${rotationCSS}`);
+
+    let wrapper = document.createElement("div");
+    wrapper.style.padding = 0;
+    wrapper.setAttribute("class", "col");
+
     let colour = "";
     if (suit == 'H' || suit == 'D') {
         colour = " text-danger";
@@ -261,11 +266,7 @@ function getCardHTML(face, suit) {
         backSide.setAttribute("width", "190");
         backSide.setAttribute("height", "228");
         backSide.setAttribute("alt", "Back Side of Card");
-        let wrapper = document.createElement("div");
-        wrapper.style.padding = 0;
-        wrapper.setAttribute("class", "col");
         wrapper.appendChild(backSide);
-        card.appendChild(wrapper);
     } else {
         let top = document.createElement("div");
         top.setAttribute("class", "card-body text-left text-dark");
@@ -281,19 +282,13 @@ function getCardHTML(face, suit) {
         bottom.innerHTML = `<h3 class="card-text${colour} rotated">${face} ${suitIcons[suit]}</h3>`;
         bottom.style.paddingTop = 0;
         bottom.style.paddingRight = "15px";
-
-        let wrapper = document.createElement("div");
-        wrapper.style.padding = 0;
         wrapper.style.transform = "rotateY(180deg)";
-        wrapper.setAttribute("class", "col");
         wrapper.appendChild(top);
         wrapper.appendChild(middle);
         wrapper.appendChild(bottom);
-
-        card.appendChild(wrapper);
-
     }
 
+    card.appendChild(wrapper);
     return card;
 }
 
