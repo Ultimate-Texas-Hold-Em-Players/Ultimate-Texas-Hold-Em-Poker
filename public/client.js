@@ -463,7 +463,19 @@ function getFullhouse(cards) {
 }
 
 function getFlush(cards) {
-    return cards.slice(0, 5);
+    /*
+    Returns the highest flush in a set of cards
+    :param cards: A 2D array of seven cards
+    :return: a 2D array of the five highest cards used to make a flush
+    */
+    let flushCards = null;
+    suits.forEach(suit=> {
+        let sameSuitCards = cards.filter(card=> card[1] === suit); //Filters hand so every card in sameSuitCards will have the same suit
+        if (sameSuitCards.length >= 5) {
+            flushCards = sameSuitCards.slice(0, 5); // If cards are ordered, take best (first) 5
+        }
+    });
+    return flushCards;
 }
 
 function getStraight(cards) {
