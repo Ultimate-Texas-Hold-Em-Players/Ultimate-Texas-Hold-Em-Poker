@@ -3,6 +3,34 @@ const faces = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 // Suit icons
 const suits =["C", "D", "H", "S"];
 const suitIcons = {C: "&clubs;", D: "&diams;", H: "&hearts;", S: "&spades;"};
+// Card outcomes
+const hand_values = {
+    lower_than_one_pair: 0,
+    one_pair: 1,
+    two_pair: 2,
+    triple: 3,
+    straight: 4,
+    flush: 5,
+    full_house: 6,
+    quads: 7,
+    straight_flush: 8,
+    royal_flush: 9
+}
+const face_values = {
+    '2': 1,
+    '3': 2,
+    '4': 3,
+    '5': 4,
+    '6': 5,
+    '7': 6,
+    '8': 7,
+    '9': 8,
+    '10': 9,
+    'J': 10,
+    'Q': 11,
+    'K': 12,
+    'A': 13
+}
 // HTML card hand constants
 const PLAYER = "playerHand";
 const DEALER = "dealerHand";
@@ -169,7 +197,116 @@ function bet(multiplier) {
 function endRound(multiplier) {
     // TODO: Decide who wins, how much player wins/loses based on the cards
     // multiplier: -1 means fold, rest mean bet times multiplier
-    document.getElementById(STATUS_BAR).innerHTML = "Round has ended. ___ wins! You have won/lost $???";
+
+    let winner = "";
+
+    // Get best 5 card hand of PLAYER
+    let player_hand_value = findBestHand(PLAYER);
+    let best_player_hand = player_hand_value[0];
+    let best_player_hand_value = player_hand_value[1];
+
+    // Get best 5 card hand of DEALER
+    let dealer_hand_value = findBestHand(DEALER);
+    let best_dealer_hand = dealer_hand_value[0];
+    let best_dealer_hand_value = dealer_hand_value[1];
+
+    // PLAYER vs DEALER
+    if (hand_values[best_player_hand_value] > hand_values[best_dealer_hand_value]) {
+        winner = "Player";
+    } else if (hand_values[best_player_hand_value] < hand_values[best_dealer_hand_value]) {
+        winner = "Dealer";
+    } else {
+        // Calculate total face value of best 5-card hands
+        let player_value = getTotalFaceValues(best_player_hand);
+        let dealer_value = getTotalFaceValues(best_dealer_hand);
+
+        if (player_value > dealer_value) {
+            winner = "Player";
+        } else if (player_value < dealer_value) {
+            winner = "Dealer";
+        } else {
+            winner = "Nobody";
+        }
+    }
+
+    let player_payout = getPayout();
+
+    document.getElementById(STATUS_BAR).innerHTML = `Your best hand: _. Dealer's best hand: _. ${winner} wins!\nYou have won/lost $${player_payout}`;
+}
+
+function findBestHand(player) {
+    /*
+    Find player's best 5-card hand
+    :param cards: Object representing a card hand
+    :return: Object of player's best 5-card hand and hand value
+    */
+    let wholeHand = hand[COMMUNITY].concat(hand[player]);
+    
+    let royalFlushHand = getRoyalFlush();
+    if (royalFlush) {
+        return (royalFlushHand, "royal_flush");
+    }
+
+    let straightFlushHand = getStraightFlush();
+    if (straightFlushHand) {
+        return (straightFlushHand, "straight_flush");
+    }
+
+    let quadsHand = getQuads();
+    if (quadsHand) {
+        return (quadsHand, "quads");
+    }
+
+    let fullHouse = getFullhouse();
+    if (fullHouse) {
+        return (fullHouse, "full_house");
+    }
+
+    let flushHand = getFlush();
+    if (flushHand) {
+        return (flushHand, "flush");
+    }
+
+    let straightHand = getStraight();
+    if (straightHand) {
+        return (straightHand, "straight");
+    }
+
+    let tripleHand = getTriple();
+    if (tripleHand) {
+        return (tripleHand, "triple");
+    }
+
+    let twoPair = getTwoPair();
+    if (twoPair) {
+        return (twoPair, "two_pair");
+    }
+
+    let onePair = getOnePair();
+    if (onePair) {
+        return (onePair, "one_pair");
+    }
+    
+    // If lower than a pair
+    return (getBestFaceValueHand(wholeHand, 5), "lower_than_one_pair");
+}
+
+function getTotalFaceValues(cards) {
+    /*
+    Calculate value of hand based on face
+    :param cards: Object representing a card hand
+    :return: Int value
+    */
+    let sum = 0;
+    for (let i=0; i<cards.length; i++) {
+        let face = cards[i][0];
+        sum += face_values[face];
+    }
+    return sum
+}
+
+function getPayout() {
+    return 0;
 }
 
 function revealRest() {
@@ -297,10 +434,65 @@ function getCardHTML(face, suit) {
     return cardWrapper;
 }
 
+/* Card outcome helpers */
+
+function getBestFaceValueHand(cards, num) {
+    /*
+    Find the best 5 cards of a 7-card hand based solely on face value
+    :param cards: Object representing a 7-card hand
+    :return: Object representing a num-card hand
+    */
+    cards.sort(function(c1, c2){return c2[0]-c1[0]});
+    return cards.slice(0, num);
+}
+
+function getRoyalFlush(cards) {
+
+}
+
+function getStraightFlush(cards) {
+
+}
+
+function getQuads(cards) {
+
+}
+
+function getFullhouse(cards) {
+
+}
+
+function getFlush(cards) {
+
+}
+
+function getStraight(cards) {
+
+}
+
+function getTriple(cards) {
+    /*
+    Checks if a 7-card hand contains a triple
+    :param cards: Object representing a 7-card hand
+    :return: Boolean
+    */
+    return True
+}
+
+function getTwoPair(cards) {
+
+}
+
+function getOnePair(cards) {
+
+}
+
+/* End of card outcome helpers */
+
 function setup() {
     /*
     Initializes the deck and sets up the table.
-    :param None
+    :param: None
     :return: None
     */
     resetDeck();
