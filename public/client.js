@@ -224,8 +224,8 @@ function endRound(multiplier) {
     document.getElementById(STATUS_BAR).innerHTML = `Your best hand: ${best_player_hand_value.replace("_", " ")}. 
     Dealer's best hand: ${best_dealer_hand_value.replace("_", " ")}. ${winner} wins! You have won/lost $${player_payout}.`;
 
-    console.log("player's 5-card hand:", best_player_hand);
-    console.log("dealer's 5-card hand:", best_dealer_hand);
+    console.log("player's 5-card hand:", [best_player_hand, best_player_hand_value]);
+    console.log("dealer's 5-card hand:", [best_dealer_hand, best_dealer_hand_value]);
 }
 
 function findBestHand(player) {
@@ -446,20 +446,31 @@ function getBestFaceValueHand(cards, num) {
     return cards.slice(0, num);
 }
 
+function getFrequencyFaces(cards) {
+    /*
+    Get frequency of each face value in a hand
+    :param cards: Object representing a 7-card hand
+    :return: Frequencies of each face value
+    */
+    let freq = {};
+    cards.forEach(c => { freq[c[0]] = (freq[c[0]] || 0) + 1; });
+    return freq;
+}
+
 function getRoyalFlush(cards) {
-    return cards.slice(0, 5);
+    return null;
 }
 
 function getStraightFlush(cards) {
-    return cards.slice(0, 5);
+    return null;
 }
 
 function getQuads(cards) {
-    return cards.slice(0, 5);
+    return null;
 }
 
 function getFullhouse(cards) {
-    return cards.slice(0, 5);
+    return null;
 }
 
 function getFlush(cards) {
@@ -470,7 +481,7 @@ function getFlush(cards) {
     */
     let flushCards = null;
     suits.forEach(suit=> {
-        let sameSuitCards = cards.filter(card=> card[1] === suit); //Filters hand so every card in sameSuitCards will have the same suit
+        let sameSuitCards = cards.filter(card=> card[1] === suit); // Filters hand so every card in sameSuitCards will have the same suit
         if (sameSuitCards.length >= 5) {
             flushCards = sameSuitCards.slice(0, 5); // If cards are ordered, take best (first) 5
         }
@@ -479,7 +490,7 @@ function getFlush(cards) {
 }
 
 function getStraight(cards) {
-    return cards.slice(0, 5);
+    return null;
 }
 
 function getTriple(cards) {
@@ -488,27 +499,42 @@ function getTriple(cards) {
     :param cards: Object representing a 7-card hand
     :return: Boolean
     */
-    /*let bestHand = [];
-
     // Find all triple values
-    let triples = [];
+    let freq = getFrequencyFaces(cards);
+    let highestTripleValue = null;
+    for (let face in freq) { // If triple found, set if it is the highest value so far
+        if (freq[face] >= 3 && (highestTripleValue == null || face_values[face] > face_values[highestTripleValue])) {
+            highestTripleValue = face;
+        }
+    }
+
+    if (!highestTripleValue) { // No triple found
+        return null;
+    }
 
     // Add best triple cards to hand
+    let triples = [];
+    let notTriples = [];
+    for (let i=0; i<cards.length; i++) {
+        if (cards[i][0] == highestTripleValue) {
+            triples.push(cards[i]);
+        } else {
+            notTriples.push(cards[i]);
+        }
+    }
 
     // Find rest of hand based on face value
-    let rest = getBestFaceValueHand();
+    let rest = getBestFaceValueHand(notTriples, 2);
 
-    return bestHand;*/
-
-    return cards.slice(0, 5);
+    return triples.concat(rest);
 }
 
 function getTwoPair(cards) {
-    return cards.slice(0, 5);
+    return null;
 }
 
 function getOnePair(cards) {
-    return cards.slice(0, 5);
+    return null;
 }
 
 /* End of card outcome helpers */
