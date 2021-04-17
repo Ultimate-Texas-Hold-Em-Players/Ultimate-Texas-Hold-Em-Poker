@@ -456,6 +456,42 @@ function getFrequencyFaces(cards) {
     return freq;
 }
 
+function getBestNumOfaKind(cards, num) {
+    /*
+    Looks for the best 5-card hand with a 4-of-a-kind
+    :param cards: Object representing a 7-card hand
+    :return: Boolean
+    */
+    // Find all num duplicate values
+    let freq = getFrequencyFaces(cards);
+    let highestNumDupeValue = null;
+    for (let face in freq) { // If num duplicate found, set if it is the highest value so far
+        if (freq[face] >= num && (highestNumDupeValue == null || face_values[face] > face_values[highestNumDupeValue])) {
+            highestNumDupeValue = face;
+        }
+    }
+
+    if (!highestNumDupeValue) { // No triple found
+        return null;
+    }
+
+    // Add best num duplicate cards to hand
+    let numDupes = [];
+    let notNumDupes = [];
+    for (let i=0; i<cards.length; i++) {
+        if (cards[i][0] == highestNumDupeValue && numDupes.length < num) {
+            numDupes.push(cards[i]);
+        } else {
+            notNumDupes.push(cards[i]);
+        }
+    }
+
+    // Find rest of hand based on face value
+    let rest = getBestFaceValueHand(notNumDupes, 5-num);
+
+    return numDupes.concat(rest);
+}
+
 function getRoyalFlush(cards) {
     return null;
 }
@@ -465,7 +501,12 @@ function getStraightFlush(cards) {
 }
 
 function getQuads(cards) {
-    return null;
+    /*
+    Looks for the best 5-card hand with a 4-of-a-kind
+    :param cards: Object representing a 7-card hand
+    :return: Boolean
+    */
+    return getBestNumOfaKind(cards, 4);
 }
 
 function getFullhouse(cards) {
@@ -494,38 +535,11 @@ function getStraight(cards) {
 
 function getTriple(cards) {
     /*
-    Looks for the best 5-card hand with a triple
+    Looks for the best 5-card hand with a 3-of-a-kind
     :param cards: Object representing a 7-card hand
     :return: Boolean
     */
-    // Find all triple values
-    let freq = getFrequencyFaces(cards);
-    let highestTripleValue = null;
-    for (let face in freq) { // If triple found, set if it is the highest value so far
-        if (freq[face] >= 3 && (highestTripleValue == null || face_values[face] > face_values[highestTripleValue])) {
-            highestTripleValue = face;
-        }
-    }
-
-    if (!highestTripleValue) { // No triple found
-        return null;
-    }
-
-    // Add best triple cards to hand
-    let triples = [];
-    let notTriples = [];
-    for (let i=0; i<cards.length; i++) {
-        if (cards[i][0] == highestTripleValue && triples.length < 3) {
-            triples.push(cards[i]);
-        } else {
-            notTriples.push(cards[i]);
-        }
-    }
-
-    // Find rest of hand based on face value
-    let rest = getBestFaceValueHand(notTriples, 2);
-
-    return triples.concat(rest);
+    return getBestNumOfaKind(cards, 3);
 }
 
 function getTwoPair(cards) {
@@ -533,7 +547,7 @@ function getTwoPair(cards) {
 }
 
 function getOnePair(cards) {
-    return null;
+    return getBestNumOfaKind(cards, 2);
 }
 
 /* End of card outcome helpers */
