@@ -117,13 +117,9 @@ function revealCard(player, face, suit, index) {
     :param suit: string of suit value
     */
     let children = document.getElementById(player).childNodes;
-    let cLength = document.getElementById(player).childNodes.length;
-    console.log(cLength);
     let card = getCardHTML(face, suit);
-    console.log(card);
     children[index].style.transform = "rotateY(180deg)";
     children[index].innerHTML = card.innerHTML;
-    console.log(children[index]);
 }
 
 function deal() {
@@ -132,8 +128,6 @@ function deal() {
     :param None
     :return: None
     */
-    console.log(hand[PLAYER][0][0]);
-    console.log(hand[PLAYER][0][1]);
     revealPlayer(PLAYER);
     let secondButton = document.getElementById(DEAL_BUTTON);
     let thirdButton = document.getElementById(CHECK_BUTTON);
@@ -238,6 +232,7 @@ function findBestHand(player) {
     :return: Object of player's best 5-card hand and hand value
     */
     let wholeHand = hand[COMMUNITY].concat(hand[player]);
+    wholeHand.sort(compareCards);
     
     let royalFlushHand = getRoyalFlush(wholeHand);
     if (royalFlushHand) {
@@ -433,13 +428,17 @@ function getCardHTML(face, suit) {
 
 /* Card outcome helpers */
 
+function compareCards(c1, c2){
+    return c2[0]-c1[0]
+}
+
 function getBestFaceValueHand(cards, num) {
     /*
     Find the best 5 cards of a 7-card hand based solely on face value
     :param cards: Object representing a 7-card hand
     :return: Object representing a num-card hand
     */
-    cards.sort(function(c1, c2){return c2[0]-c1[0]});
+    cards.sort(compareCards);
     return cards.slice(0, num);
 }
 
