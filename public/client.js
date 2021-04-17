@@ -35,6 +35,11 @@ let hand = {};
 let communityStatus = CHECK0;
 let communityRevealed = 0; // Last index of revealed cards
 
+let tripsQualify = 0;
+let tripsPayoff = [3, 5, 6, 8, 30, 40, 50];
+let blindQualify = 0;
+let blindPayoff = [1, 1.5, 3, 10, 50, 500];
+let dealerQualify=false;
 
 function resetDeck() {
     /*
@@ -163,7 +168,7 @@ function bet(multiplier) {
     */
     //
     handleInput(multiplier);
-    
+
     revealRest();
     endRound(multiplier);
 
@@ -196,24 +201,58 @@ function handleInput(multiplier){
 
 }
 
-function payCalculation() {
+function payCalculation(multiplier) {
   let anteBet =  document.getElementById(ANTE).value;
   let blindBet =  document.getElementById(BLIND).value;
   let playBet =  document.getElementById(PLAY).value;
   let tripsBet =  document.getElementById(TRIPS).value;
+  let endTotal = 0;
+  let finalMsg = "";
   console.log(anteBet);
   console.log(blindBet);
   console.log(playBet);
   console.log(tripsBet);
+  if (tripsQualify>-1){
+    tripsBet = parseInt(tripsBet)*tripsPayoff[tripsQualify];
+  } else{
+    tripsBet = parseInt(tripsBet)*(-1);
+  }
+  if (blindQualify>-1){
+    blindBet = parseInt(blindBet)*blindPayoff[blindQualify];
+  }
 
+  if (multiplier==0){
+    endTotal = (-2)*parseInt(anteBet) + tripsBet;
+    finalMsg ="Round has ended. Dealer wins! You have lost $"+endTotal;
+  }
+  else if (multiplier==1){
+    if (blindQualify<0){
+      blindBet *= -1;
+    }
+    endTotal =  blindBet + tripsBet - parseInt(anteBet) - parseInt(playBet);
+    finalMsg ="Round has ended. Dealer wins! You have lost $"+endTotal;
+  }
+  else if (multiplier==2){
+    if (blindQualify<0){
+      blindBet = 0;
+    }
+    if (!dealerQualify){
+        endTotal = parseInt(playBet) + blindBet + tripsBet;
+    }
+    else{
+      endTotal = parseInt(anteBet) + parseInt(playBet) + blindBet + tripsBet;
+    }
+    finalMsg ="Round has ended. PLayer wins! You have won $"+endTotal;
+  }
+  document.getElementById(STATUS_BAR).innerHTML = finalMsg;
 }
 
 
 function endRound(multiplier) {
     // TODO: Decide who wins, how much player wins/loses based on the cards
     // multiplier: -1 means fold, rest mean bet times multiplier
-    payCalculation();
-    document.getElementById(STATUS_BAR).innerHTML = "Round has ended. ___ wins! You have won/lost $???";
+    payCalculation(2);
+
 }
 
 function revealRest() {
