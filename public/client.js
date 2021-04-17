@@ -192,7 +192,7 @@ function endRound(multiplier) {
     // TODO: Decide who wins, how much player wins/loses based on the cards
     // multiplier: -1 means fold, rest mean bet times multiplier
 
-    let winner = "";
+    let winMsg = "";
 
     // Get best 5 card hand of PLAYER
     let [best_player_hand, best_player_hand_value] = findBestHand(PLAYER);
@@ -200,32 +200,31 @@ function endRound(multiplier) {
     // Get best 5 card hand of DEALER
     let [best_dealer_hand, best_dealer_hand_value] = findBestHand(DEALER);
 
+    console.log("player's 5-card hand:", [best_player_hand, best_player_hand_value]);
+    console.log("dealer's 5-card hand:", [best_dealer_hand, best_dealer_hand_value]);
+
     // PLAYER vs DEALER
     if (hand_values[best_player_hand_value] > hand_values[best_dealer_hand_value]) {
-        winner = "Player";
+        winMsg = "Player wins!";
     } else if (hand_values[best_player_hand_value] < hand_values[best_dealer_hand_value]) {
-        winner = "Dealer";
+        winMsg = "Dealer wins!";
     } else {
         // Calculate total face value of best 5-card hands
         let player_value = getTotalFaceValues(best_player_hand);
         let dealer_value = getTotalFaceValues(best_dealer_hand);
 
         if (player_value > dealer_value) {
-            winner = "Player";
+            winMsg = "Player wins!";
         } else if (player_value < dealer_value) {
-            winner = "Dealer";
+            winMsg = "Dealer wins!";
         } else {
-            winner = "Nobody";
+            winMsg = "It's a tie!";
         }
     }
 
     let player_payout = getPayout();
 
-    document.getElementById(STATUS_BAR).innerHTML = `Your best hand: ${best_player_hand_value.replace("_", " ")}. 
-    Dealer's best hand: ${best_dealer_hand_value.replace("_", " ")}. ${winner} wins! You have won/lost $${player_payout}.`;
-
-    console.log("player's 5-card hand:", [best_player_hand, best_player_hand_value]);
-    console.log("dealer's 5-card hand:", [best_dealer_hand, best_dealer_hand_value]);
+    document.getElementById(STATUS_BAR).innerHTML = `Your best hand: ${best_player_hand_value.split("_").join(" ")}. Dealer's best hand: ${best_dealer_hand_value.split("_").join(" ")}. ${winMsg} You have won/lost $${player_payout}.`;
 }
 
 function findBestHand(player) {
@@ -284,7 +283,7 @@ function findBestHand(player) {
     }
     
     // If lower than a pair
-    return (getBestFaceValueHand(wholeHand, 5), "lower_than_one_pair");
+    return [getBestFaceValueHand(wholeHand, 5), "lower_than_one_pair"];
 }
 
 function getTotalFaceValues(cards) {
