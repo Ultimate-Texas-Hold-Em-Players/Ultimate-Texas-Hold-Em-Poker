@@ -515,7 +515,7 @@ function getTriple(cards) {
     let triples = [];
     let notTriples = [];
     for (let i=0; i<cards.length; i++) {
-        if (cards[i][0] == highestTripleValue) {
+        if (cards[i][0] == highestTripleValue && triples.length < 3) {
             triples.push(cards[i]);
         } else {
             notTriples.push(cards[i]);
