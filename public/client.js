@@ -209,6 +209,8 @@ function endRound(multiplier) {
     } else if (hand_values[best_player_hand_value] < hand_values[best_dealer_hand_value]) {
         winMsg = "Dealer wins!";
     } else {
+        // TODO: remove the below, and compare highest cards first, then 2nd highest cards to determine winner!
+        
         // Calculate total face value of best 5-card hands
         let player_value = getTotalFaceValues(best_player_hand);
         let dealer_value = getTotalFaceValues(best_dealer_hand);
