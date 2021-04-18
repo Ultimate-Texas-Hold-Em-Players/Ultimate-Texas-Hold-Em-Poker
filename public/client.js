@@ -209,16 +209,20 @@ function endRound(multiplier) {
     } else if (hand_values[best_player_hand_value] < hand_values[best_dealer_hand_value]) {
         winMsg = "Dealer wins!";
     } else {
-        // TODO: remove the below, and compare highest cards first, then 2nd highest cards to determine winner!
-        
-        // Calculate total face value of best 5-card hands
-        let player_value = getTotalFaceValues(best_player_hand);
-        let dealer_value = getTotalFaceValues(best_dealer_hand);
+        // Compare player and dealer's highest cards
+        let highestPlayer = hand[PLAYER][0][0];
+        if (face_values[hand[PLAYER][1][0]] > face_values[highestPlayer]) {
+            highestPlayer = hand[PLAYER][1][0];
+        }
+        let highestDealer = hand[DEALER][0][0];
+        if (face_values[hand[DEALER][1][0]] > face_values[highestPlayer]) {
+            highestDealer = hand[DEALER][1][0];
+        }
 
-        if (player_value > dealer_value) {
-            winMsg = "Player wins!";
-        } else if (player_value < dealer_value) {
-            winMsg = "Dealer wins!";
+        if (face_values[highestPlayer] > face_values[highestDealer]) {
+            winMsg = `Player wins with ${highestPlayer}-High!`;
+        } else if (face_values[highestPlayer] < face_values[highestDealer]) {
+            winMsg = `Dealer wins with ${highestPlayer}-High!`;
         } else {
             winMsg = "It's a tie!";
         }
