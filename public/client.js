@@ -534,7 +534,35 @@ function getRoyalFlush(cards) {
 }
 
 function getStraightFlush(cards) {
-    return null;
+    /*
+    Looks for the best 5-card hand with a straight and flush
+    :param cards: Object representing a 7-card hand
+    :return: Boolean
+    */
+    // Assume cards are already sorted from highest value to lowest value
+    let straightSuitIndices = [cards[0]];
+    let currValue = face_values[cards[0][0]];
+    let currSuit = cards[0][1];
+    for (let i=1; i<cards.length; i++) {
+        if (face_values[cards[i][0]] == currValue-1 && cards[i][1] == currSuit) {
+            // If going down 1 AND the suit matches, add to straightSuitIndices
+            straightSuitIndices.push(cards[i]);
+            currValue = face_values[cards[i][0]];
+            currSuit = cards[i][1];
+            if (straightSuitIndices >= 5) {
+                break; // If 5 straights are found (first set of straights will be largest straight available), leave
+            }
+        } else { // If not, reset it and currValue, currSuit
+            straightSuitIndices = [cards[i]];
+            currValue = face_values[cards[i][0]];
+            currSuit = cards[i][1];
+        }
+    }
+
+    if (straightSuitIndices.length < 5) {
+        return null
+    }
+    return straightSuitIndices;
 }
 
 function getQuads(cards) {
@@ -583,11 +611,9 @@ function getStraight(cards) {
             if (straightIndices >= 5) {
                 break; // If 5 straights are found (first set of straights will be largest straight available), leave
             }
-        } else { // If not, check size of straightIndices, if not a full hand, reset it and currValue
-            if (straightIndices.length < 5) {
-                straightIndices = [cards[i]];
-                currValue = face_values[cards[i][0]];
-            }
+        } else { // If not, reset it and currValue
+            straightIndices = [cards[i]];
+            currValue = face_values[cards[i][0]];
         }
     }
 
