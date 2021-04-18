@@ -222,7 +222,7 @@ function endRound(multiplier) {
         if (face_values[highestPlayer] > face_values[highestDealer]) {
             winMsg = `Player wins with ${highestPlayer}-High!`;
         } else if (face_values[highestPlayer] < face_values[highestDealer]) {
-            winMsg = `Dealer wins with ${highestPlayer}-High!`;
+            winMsg = `Dealer wins with ${highestDealer}-High!`;
         } else {
             winMsg = "It's a tie!";
         }
