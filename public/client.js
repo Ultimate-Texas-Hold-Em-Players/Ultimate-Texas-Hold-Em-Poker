@@ -251,7 +251,8 @@ function findBestHand(player) {
     /*
     Find player's best 5-card hand
     :param cards: Object representing a card hand
-    :return: Object of player's best 5-card hand and hand value
+    :return: Object of player's best 5-card hand and hand value,
+             hand is in sorted order by most to least relevant cards, dependent on the hand type
     */
     let wholeHand = hand[COMMUNITY].concat(hand[player]);
     wholeHand.sort(compareCards);
@@ -475,7 +476,7 @@ function compareCards(c1, c2){
 function getBestFaceValueHand(cards, num) {
     /*
     Find the best 5 cards of a 7-card hand based solely on face value
-    :param cards: Object representing a 7-card hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: Object representing a num-card hand
     */
     cards.sort(compareCards);
@@ -485,7 +486,7 @@ function getBestFaceValueHand(cards, num) {
 function getFrequencyFaces(cards) {
     /*
     Get frequency of each face value in a hand
-    :param cards: Object representing a 7-card hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: Frequencies of each face value
     */
     let freq = {};
@@ -496,7 +497,7 @@ function getFrequencyFaces(cards) {
 function getBestNumOfaKind(cards, num) {
     /*
     Looks for the best 5-card hand with an n-of-a-kind
-    :param cards: Object representing a 7-card hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: Boolean
     */
     // Find all num duplicate values
@@ -508,7 +509,7 @@ function getBestNumOfaKind(cards, num) {
         }
     }
 
-    if (!highestNumDupeValue) { // No triple found
+    if (!highestNumDupeValue) { // No n-of-a-kind found
         return null;
     }
 
@@ -536,7 +537,7 @@ function getRoyalFlush(cards) {
 function getStraightFlush(cards) {
     /*
     Looks for the best 5-card hand with a straight and flush
-    :param cards: Object representing a 7-card hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: Boolean
     */
     // Assume cards are already sorted from highest value to lowest value
@@ -568,7 +569,7 @@ function getStraightFlush(cards) {
 function getQuads(cards) {
     /*
     Looks for the best 5-card hand with a 4-of-a-kind
-    :param cards: Object representing a 7-card hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: Boolean
     */
     return getBestNumOfaKind(cards, 4);
@@ -581,7 +582,7 @@ function getFullhouse(cards) {
 function getFlush(cards) {
     /*
     Returns the highest flush in a set of cards
-    :param cards: A 2D array of seven cards
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: a 2D array of the five highest cards used to make a flush
     */
     let flushCards = null;
@@ -597,7 +598,7 @@ function getFlush(cards) {
 function getStraight(cards) {
     /*
     Looks for the best 5-card hand with a straight
-    :param cards: Object representing a 7-card hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: Boolean
     */
     // Assume cards are already sorted from highest value to lowest value
@@ -626,7 +627,7 @@ function getStraight(cards) {
 function getTriple(cards) {
     /*
     Looks for the best 5-card hand with a 3-of-a-kind
-    :param cards: Object representing a 7-card hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
     :return: Boolean
     */
     return getBestNumOfaKind(cards, 3);
