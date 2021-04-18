@@ -549,7 +549,6 @@ function getStraightFlush(cards) {
             // If going down 1 AND the suit matches, add to straightSuitIndices
             straightSuitIndices.push(cards[i]);
             currValue = face_values[cards[i][0]];
-            currSuit = cards[i][1];
             if (straightSuitIndices.length >= 5) {
                 break; // If 5 straights are found (first set of straights will be largest straight available), leave
             }
