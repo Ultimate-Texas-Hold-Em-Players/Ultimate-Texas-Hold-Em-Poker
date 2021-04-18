@@ -567,7 +567,34 @@ function getFlush(cards) {
 }
 
 function getStraight(cards) {
-    return null;
+    /*
+    Looks for the best 5-card hand with a straight
+    :param cards: Object representing a 7-card hand
+    :return: Boolean
+    */
+    // Assume cards are already sorted from highest value to lowest value
+    let straightIndices = [cards[0]];
+    let currValue = face_values[cards[0][0]];
+    for (let i=1; i<cards.length; i++) {
+        if (face_values[cards[i][0]] == currValue-1) {
+            // If going down 1, add to straightindices
+            straightIndices.push(cards[i]);
+            currValue = face_values[cards[i][0]];
+            if (straightIndices >= 5) {
+                break; // If 5 straights are found (first set of straights will be largest straight available), leave
+            }
+        } else { // If not, check size of straightIndices, if not a full hand, reset it and currValue
+            if (straightIndices.length < 5) {
+                straightIndices = [cards[i]];
+                currValue = face_values[cards[i][0]];
+            }
+        }
+    }
+
+    if (straightIndices.length < 5) {
+        return null
+    }
+    return straightIndices;
 }
 
 function getTriple(cards) {
