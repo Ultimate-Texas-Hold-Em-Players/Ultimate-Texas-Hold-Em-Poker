@@ -209,21 +209,18 @@ function endRound(multiplier) {
     } else if (hand_values[best_player_hand_value] < hand_values[best_dealer_hand_value]) {
         winMsg = "Dealer wins!";
     } else {
-        // Compare player and dealer's highest cards
-        let highestPlayer = hand[PLAYER][0][0];
-        if (face_values[hand[PLAYER][1][0]] > face_values[highestPlayer]) {
-            highestPlayer = hand[PLAYER][1][0];
-        }
-        let highestDealer = hand[DEALER][0][0];
-        if (face_values[hand[DEALER][1][0]] > face_values[highestPlayer]) {
-            highestDealer = hand[DEALER][1][0];
+        // Compare 1st indices, 2nd indices, 3rd and so on until the card values do not match between player and dealer
+        for (let i=0; i<best_player_hand.length; i++) {
+            if (face_values[best_player_hand[i][0]] > face_values[best_dealer_hand[i][0]]) {
+                winMsg = `Player wins with ${best_player_hand[i][0]}-High!`;
+                break;
+            } else if (face_values[best_player_hand[i][0]] < face_values[best_dealer_hand[i][0]]) {
+                winMsg = `Dealer wins with ${best_dealer_hand[i][0]}-High!`;
+                break;
+            }
         }
 
-        if (face_values[highestPlayer] > face_values[highestDealer]) {
-            winMsg = `Player wins with ${highestPlayer}-High!`;
-        } else if (face_values[highestPlayer] < face_values[highestDealer]) {
-            winMsg = `Dealer wins with ${highestDealer}-High!`;
-        } else {
+        if (winMsg == "") {
             winMsg = "It's a tie!";
         }
     }
@@ -464,7 +461,7 @@ function getFrequencyFaces(cards) {
 
 function getBestNumOfaKind(cards, num) {
     /*
-    Looks for the best 5-card hand with a 4-of-a-kind
+    Looks for the best 5-card hand with an n-of-a-kind
     :param cards: Object representing a 7-card hand
     :return: Boolean
     */
