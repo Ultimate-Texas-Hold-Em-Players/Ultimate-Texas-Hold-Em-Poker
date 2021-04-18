@@ -35,6 +35,9 @@ const face_values = {
 const PLAYER = "playerHand";
 const DEALER = "dealerHand";
 const COMMUNITY = "communityCards";
+// HTML label constants
+const PLAYER_LBL = "playerLbl";
+const DEALER_LBL = "dealerLbl";
 // HTML element constants
 const STATUS_BAR = "status";
 const DEAL_BUTTON = "second-button";
@@ -68,9 +71,13 @@ function resetDeck() {
     let dealerEle = document.getElementById(DEALER);
     let playerEle = document.getElementById(PLAYER);
     let communityEle = document.getElementById(COMMUNITY);
+    let dealerLbl = document.getElementById(DEALER_LBL);
+    let playerLbl = document.getElementById(PLAYER_LBL);
     dealerEle.innerHTML = "";
     playerEle.innerHTML = "";
     communityEle.innerHTML = "";
+    dealerLbl.innerHTML = "Dealer's Cards";
+    playerLbl.innerHTML = "Player's Cards";
     hand[DEALER] = [];
     hand[PLAYER] = [];
     hand[COMMUNITY] = [];
@@ -189,8 +196,11 @@ function bet(multiplier) {
 }
 
 function endRound(multiplier) {
-    // TODO: Decide who wins, how much player wins/loses based on the cards
-    // multiplier: -1 means fold, rest mean bet times multiplier
+    /*
+    Decide round results, who wins, how much player wins/loses based on the cards,
+    and display results
+    */
+    // Multiplier: -1 means fold, rest mean bet times multiplier
 
     let winMsg = "";
 
@@ -202,6 +212,13 @@ function endRound(multiplier) {
 
     console.log("player's 5-card hand:", [best_player_hand, best_player_hand_value]);
     console.log("dealer's 5-card hand:", [best_dealer_hand, best_dealer_hand_value]);
+    let player_hand_str = formatHandLabel(best_player_hand);
+    let dealer_hand_str = formatHandLabel(best_dealer_hand);
+
+    let dealerLbl = document.getElementById(DEALER_LBL);
+    let playerLbl = document.getElementById(PLAYER_LBL);
+    dealerLbl.innerHTML = `Dealer's Hand: ${best_dealer_hand_value.split("_").join(" ")}, ${dealer_hand_str}`;
+    playerLbl.innerHTML = `Player's Hand: ${best_player_hand_value.split("_").join(" ")}, ${player_hand_str}`;
 
     // PLAYER vs DEALER
     if (hand_values[best_player_hand_value] > hand_values[best_dealer_hand_value]) {
@@ -227,7 +244,7 @@ function endRound(multiplier) {
 
     let player_payout = getPayout();
 
-    document.getElementById(STATUS_BAR).innerHTML = `Your best hand: ${best_player_hand_value.split("_").join(" ")}. Dealer's best hand: ${best_dealer_hand_value.split("_").join(" ")}. ${winMsg} You have won/lost $${player_payout}.`;
+    document.getElementById(STATUS_BAR).innerHTML = `${winMsg} You have won/lost $${player_payout}.`;
 }
 
 function findBestHand(player) {
@@ -301,6 +318,23 @@ function getTotalFaceValues(cards) {
         sum += face_values[face];
     }
     return sum
+}
+
+function formatHandLabel(cards) {
+    /*
+    Generate string of hand, highlight duplicate face values
+    :param cards: Object representing a card hand
+    :return: String of formatted cards
+    */
+    let cardStr = "";
+    for (let i=0; i<cards.length; i++) {
+        if ((i > 0 && cards[i-1][0] == cards[i][0]) || (i < cards.length-1 && cards[i+1][0] == cards[i][0])) {
+            cardStr += `<u>${cards[i][0]+suitIcons[cards[i][1]]}</u> `;
+        } else {
+            cardStr += `${cards[i][0]+suitIcons[cards[i][1]]} `;
+        }
+    }
+    return cardStr;
 }
 
 function getPayout() {
