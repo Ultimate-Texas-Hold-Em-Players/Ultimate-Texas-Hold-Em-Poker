@@ -532,7 +532,6 @@ function getFullhouse(cards) {
     }
     if ((triple) && (pair)){
       let fullHouseCards = [];
-      //i=(Object.keys(freq).length)-1
       for (let i=0; i<cards.length; i++) {
           if (fullHouseCards.length==3){
             break;
@@ -545,7 +544,6 @@ function getFullhouse(cards) {
           if (fullHouseCards.length==5){
             break;
           }
-          console.log(freq[cards[i][0]]);
           if (freq[cards[i][0]]==2){
             fullHouseCards.push(cards[i]);
           }
@@ -578,6 +576,7 @@ function getFlush(cards) {
 }
 
 function getStraight(cards) {
+
     return null;
 }
 
@@ -591,7 +590,52 @@ function getTriple(cards) {
 }
 
 function getTwoPair(cards) {
+  let pair = 0;
+  //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["8", "D"]];
+  //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["9", "C"]];
+  //let testCards = [["10", "C"], ["9", "S"], ["9", "D"], ["5", "S"], ["6", "H"], ["A", "H"], ["4", "D"]];
+  //testCards.sort(compareCards);
+  //console.log("Test cards");
+  //console.log(testCards);
+  let freq = getFrequencyFaces(cards);
+  console.log(freq);
+  for (let face in freq) {
+      if (freq[face] == 2){
+        pair++;
+      }
+  }
+  if (pair>=2){
+    let twoPairCards = [];
+    for (let i=0; i<cards.length; i++) {
+        if (twoPairCards.length==4){
+          break;
+        }
+        if (freq[cards[i][0]]==2){
+          twoPairCards.push(cards[i]);
+        }
+    }
+    for (let i=0; i<cards.length; i++) {
+      if (twoPairCards.length==5){
+        break;
+      }
+      let count=0;
+      for (let j=0; j<twoPairCards.length; j++) {
+        if (twoPairCards[j][0]!=cards[i][0]){
+          count++;
+        }
+      }
+      if (count==4){
+        twoPairCards.push(cards[i]);
+      }
+    }
+    console.log("TwoPair cards");
+    console.log(twoPairCards);
+    return twoPairCards;
+  }
+  else{
+    console.log("No two pair");
     return null;
+  }
 }
 
 function getOnePair(cards) {
