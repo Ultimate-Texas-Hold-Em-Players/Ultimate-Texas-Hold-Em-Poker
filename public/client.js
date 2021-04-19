@@ -531,6 +531,19 @@ function getBestNumOfaKind(cards, num) {
 }
 
 function getRoyalFlush(cards) {
+    /*
+    Looks for the royal flush hand in a set of 7 cards
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: A set of cards sorted in decending order such that the royal flush cards are 
+    near the start of the array, and the non-royal flush cards are sorted after
+    */
+    let onlyFlush = flush(cards).slice(0, 5); // If the cards are flush, then let's use the flush cards.
+    if (!onlyFlush) return null;
+    
+    //If the best five cards in the flush correspond to royal values, return onlyFlush.
+    if (onlyFlush.filter(card=> (card[0]>=face_values['10']) && (card[0]<=face_values['A'])).length === 5)
+        return cards;
+    
     return null;
 }
 
