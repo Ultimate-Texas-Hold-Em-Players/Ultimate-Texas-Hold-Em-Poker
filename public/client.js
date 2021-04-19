@@ -3,10 +3,41 @@ const faces = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 // Suit icons
 const suits =["C", "D", "H", "S"];
 const suitIcons = {C: "&clubs;", D: "&diams;", H: "&hearts;", S: "&spades;"};
+// Card outcomes
+const hand_values = {
+    lower_than_one_pair: 0,
+    one_pair: 1,
+    two_pair: 2,
+    triple: 3,
+    straight: 4,
+    flush: 5,
+    full_house: 6,
+    quads: 7,
+    straight_flush: 8,
+    royal_flush: 9
+}
+const face_values = {
+    '2': 1,
+    '3': 2,
+    '4': 3,
+    '5': 4,
+    '6': 5,
+    '7': 6,
+    '8': 7,
+    '9': 8,
+    '10': 9,
+    'J': 10,
+    'Q': 11,
+    'K': 12,
+    'A': 13
+}
 // HTML card hand constants
 const PLAYER = "playerHand";
 const DEALER = "dealerHand";
 const COMMUNITY = "communityCards";
+// HTML label constants
+const PLAYER_LBL = "playerLbl";
+const DEALER_LBL = "dealerLbl";
 // HTML element constants
 const STATUS_BAR = "status";
 const DEAL_BUTTON = "second-button";
@@ -40,9 +71,13 @@ function resetDeck() {
     let dealerEle = document.getElementById(DEALER);
     let playerEle = document.getElementById(PLAYER);
     let communityEle = document.getElementById(COMMUNITY);
+    let dealerLbl = document.getElementById(DEALER_LBL);
+    let playerLbl = document.getElementById(PLAYER_LBL);
     dealerEle.innerHTML = "";
     playerEle.innerHTML = "";
     communityEle.innerHTML = "";
+    dealerLbl.innerHTML = "Dealer's Cards";
+    playerLbl.innerHTML = "Player's Cards";
     hand[DEALER] = [];
     hand[PLAYER] = [];
     hand[COMMUNITY] = [];
@@ -89,13 +124,9 @@ function revealCard(player, face, suit, index) {
     :param suit: string of suit value
     */
     let children = document.getElementById(player).childNodes;
-    let cLength = document.getElementById(player).childNodes.length;
-    console.log(cLength);
     let card = getCardHTML(face, suit);
-    console.log(card);
     children[index].style.transform = "rotateY(180deg)";
     children[index].innerHTML = card.innerHTML;
-    console.log(children[index]);
 }
 
 function deal() {
@@ -104,8 +135,6 @@ function deal() {
     :param None
     :return: None
     */
-    console.log(hand[PLAYER][0][0]);
-    console.log(hand[PLAYER][0][1]);
     revealPlayer(PLAYER);
     let secondButton = document.getElementById(DEAL_BUTTON);
     let thirdButton = document.getElementById(CHECK_BUTTON);
@@ -167,9 +196,150 @@ function bet(multiplier) {
 }
 
 function endRound(multiplier) {
-    // TODO: Decide who wins, how much player wins/loses based on the cards
-    // multiplier: -1 means fold, rest mean bet times multiplier
-    document.getElementById(STATUS_BAR).innerHTML = "Round has ended. ___ wins! You have won/lost $???";
+    /*
+    Decide round results, who wins, how much player wins/loses based on the cards,
+    and display results
+    */
+    // Multiplier: -1 means fold, rest mean bet times multiplier
+
+    let winMsg = "";
+
+    // Get best 5 card hand of PLAYER
+    let [best_player_hand, best_player_hand_value] = findBestHand(PLAYER);
+
+    // Get best 5 card hand of DEALER
+    let [best_dealer_hand, best_dealer_hand_value] = findBestHand(DEALER);
+
+    console.log("player's 5-card hand:", [best_player_hand, best_player_hand_value]);
+    console.log("dealer's 5-card hand:", [best_dealer_hand, best_dealer_hand_value]);
+    let player_hand_str = formatHandLabel(best_player_hand);
+    let dealer_hand_str = formatHandLabel(best_dealer_hand);
+
+    let dealerLbl = document.getElementById(DEALER_LBL);
+    let playerLbl = document.getElementById(PLAYER_LBL);
+    dealerLbl.innerHTML = `Dealer's Hand: ${best_dealer_hand_value.split("_").join(" ")}, ${dealer_hand_str}`;
+    playerLbl.innerHTML = `Player's Hand: ${best_player_hand_value.split("_").join(" ")}, ${player_hand_str}`;
+
+    // PLAYER vs DEALER
+    if (hand_values[best_player_hand_value] > hand_values[best_dealer_hand_value]) {
+        winMsg = "Player wins!";
+    } else if (hand_values[best_player_hand_value] < hand_values[best_dealer_hand_value]) {
+        winMsg = "Dealer wins!";
+    } else {
+        // Compare 1st indices, 2nd indices, 3rd and so on until the card values do not match between player and dealer
+        for (let i=0; i<best_player_hand.length; i++) {
+            if (face_values[best_player_hand[i][0]] > face_values[best_dealer_hand[i][0]]) {
+                winMsg = `Player wins with ${best_player_hand[i][0]}-High!`;
+                break;
+            } else if (face_values[best_player_hand[i][0]] < face_values[best_dealer_hand[i][0]]) {
+                winMsg = `Dealer wins with ${best_dealer_hand[i][0]}-High!`;
+                break;
+            }
+        }
+
+        if (winMsg == "") {
+            winMsg = "It's a tie!";
+        }
+    }
+
+    let player_payout = getPayout();
+
+    document.getElementById(STATUS_BAR).innerHTML = `${winMsg} You have won/lost $${player_payout}.`;
+}
+
+function findBestHand(player) {
+    /*
+    Find player's best 5-card hand
+    :param cards: Object representing a card hand
+    :return: Object of player's best 5-card hand and hand value,
+             hand is in sorted order by most to least relevant cards, dependent on the hand type
+    */
+    let wholeHand = hand[COMMUNITY].concat(hand[player]);
+    wholeHand.sort(compareCards);
+    console.log("sorted whole cards of player ", player, wholeHand)
+    
+    let royalFlushHand = getRoyalFlush(wholeHand);
+    if (royalFlushHand) {
+        return [royalFlushHand, "royal_flush"];
+    }
+
+    let straightFlushHand = getStraightFlush(wholeHand);
+    if (straightFlushHand) {
+        return [straightFlushHand, "straight_flush"];
+    }
+
+    let quadsHand = getQuads(wholeHand);
+    if (quadsHand) {
+        return [quadsHand, "quads"];
+    }
+
+    let fullHouse = getFullhouse(wholeHand);
+    if (fullHouse) {
+        return [fullHouse, "full_house"];
+    }
+
+    let flushHand = getFlush(wholeHand);
+    if (flushHand) {
+        return [flushHand, "flush"];
+    }
+
+    let straightHand = getStraight(wholeHand);
+    if (straightHand) {
+        return [straightHand, "straight"];
+    }
+
+    let tripleHand = getTriple(wholeHand);
+    if (tripleHand) {
+        return [tripleHand, "triple"];
+    }
+
+    let twoPair = getTwoPair(wholeHand);
+    if (twoPair) {
+        return [twoPair, "two_pair"];
+    }
+
+    let onePair = getOnePair(wholeHand);
+    if (onePair) {
+        return [onePair, "one_pair"];
+    }
+    
+    // If lower than a pair
+    return [getBestFaceValueHand(wholeHand, 5), "lower_than_one_pair"];
+}
+
+function getTotalFaceValues(cards) {
+    /*
+    Calculate value of hand based on face
+    :param cards: Object representing a card hand
+    :return: Int value
+    */
+    let sum = 0;
+    for (let i=0; i<cards.length; i++) {
+        let face = cards[i][0];
+        sum += face_values[face];
+    }
+    return sum
+}
+
+function formatHandLabel(cards) {
+    /*
+    Generate string of hand, highlight duplicate face values
+    :param cards: Object representing a card hand
+    :return: String of formatted cards
+    */
+    let cardStr = "";
+    for (let i=0; i<cards.length; i++) {
+        if ((i > 0 && cards[i-1][0] == cards[i][0]) || (i < cards.length-1 && cards[i+1][0] == cards[i][0])) {
+            cardStr += `<u>${cards[i][0]+suitIcons[cards[i][1]]}</u> `;
+        } else {
+            cardStr += `${cards[i][0]+suitIcons[cards[i][1]]} `;
+        }
+    }
+    return cardStr;
+}
+
+function getPayout() {
+    return 0;
 }
 
 function revealRest() {
@@ -297,10 +467,276 @@ function getCardHTML(face, suit) {
     return cardWrapper;
 }
 
+/* Card outcome helpers */
+
+function compareCards(c1, c2){
+    return face_values[c2[0]]-face_values[c1[0]];
+}
+
+function getBestFaceValueHand(cards, num) {
+    /*
+    Find the best 5 cards of a 7-card hand based solely on face value
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: Object representing a num-card hand
+    */
+    cards.sort(compareCards);
+    return cards.slice(0, num);
+}
+
+function getFrequencyFaces(cards) {
+    /*
+    Get frequency of each face value in a hand
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: Frequencies of each face value
+    */
+    let freq = {};
+    cards.forEach(c => { freq[c[0]] = (freq[c[0]] || 0) + 1; });
+    return freq;
+}
+
+function getBestNumOfaKind(cards, num) {
+    /*
+    Looks for the best 5-card hand with an n-of-a-kind
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: Boolean
+    */
+    // Find all num duplicate values
+    let freq = getFrequencyFaces(cards);
+    let highestNumDupeValue = null;
+    for (let face in freq) { // If num duplicate found, set if it is the highest value so far
+        if (freq[face] >= num && (highestNumDupeValue == null || face_values[face] > face_values[highestNumDupeValue])) {
+            highestNumDupeValue = face;
+        }
+    }
+
+    if (!highestNumDupeValue) { // No n-of-a-kind found
+        return null;
+    }
+
+    // Add best num duplicate cards to hand
+    let numDupes = [];
+    let notNumDupes = [];
+    for (let i=0; i<cards.length; i++) {
+        if (cards[i][0] == highestNumDupeValue && numDupes.length < num) {
+            numDupes.push(cards[i]);
+        } else {
+            notNumDupes.push(cards[i]);
+        }
+    }
+
+    // Find rest of hand based on face value
+    let rest = getBestFaceValueHand(notNumDupes, 5-num);
+
+    return numDupes.concat(rest);
+}
+
+function getRoyalFlush(cards) {
+    /*
+    Looks for the royal flush hand in a set of 7 cards
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: A set of cards sorted in decending order such that the royal flush cards are 
+    near the start of the array, and the non-royal flush cards are sorted after
+    */
+    let onlyFlush = getFlush(cards); // Find the best possible flush
+    if (!onlyFlush) return null;
+    
+    //If the best five cards in the flush correspond to royal values, return onlyFlush.
+    if (onlyFlush.filter(card=> (card[0]>=face_values['10']) && (card[0]<=face_values['A'])).length === 5)
+        return onlyFlush;
+    
+    return null;
+}
+
+function getStraightFlush(cards) {
+    /*
+    Looks for the best 5-card hand with a straight and flush
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: Boolean
+    */
+    // Assume cards are already sorted from highest value to lowest value
+    let straightSuitIndices = [cards[0]];
+    let currValue = face_values[cards[0][0]];
+    let currSuit = cards[0][1];
+    for (let i=1; i<cards.length; i++) {
+        if (face_values[cards[i][0]] == currValue-1 && cards[i][1] == currSuit) {
+            // If going down 1 AND the suit matches, add to straightSuitIndices
+            straightSuitIndices.push(cards[i]);
+            currValue = face_values[cards[i][0]];
+            if (straightSuitIndices.length >= 5) {
+                break; // If 5 straights are found (first set of straights will be largest straight available), leave
+            }
+        } else { // If not, reset it and currValue, currSuit
+            straightSuitIndices = [cards[i]];
+            currValue = face_values[cards[i][0]];
+            currSuit = cards[i][1];
+        }
+    }
+
+    if (straightSuitIndices.length < 5) {
+        return null
+    }
+    return straightSuitIndices;
+}
+
+function getQuads(cards) {
+    /*
+    Looks for the best 5-card hand with a 4-of-a-kind
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: Boolean
+    */
+    return getBestNumOfaKind(cards, 4);
+}
+
+function getFullhouse(cards) {
+    /*
+    Returns the tripple and highest pair that make up a full house in a set of cards
+    :param cards: A 2D array of seven cards in sorted order from highest to lowest face
+    :return: a 2D array of five cards that consists of the tripple and highest pair used to make a full house
+    */
+    let triple = false;
+    let pair = false;
+    let freq = getFrequencyFaces(cards);
+    for (let face in freq) {
+        if (freq[face] == 3){
+          triple=true;
+        }
+        if (freq[face] == 2){
+          pair=true;
+        }
+    }
+    if ((triple) && (pair)){
+      let fullHouseCards = [];
+      for (let i=0; i<cards.length; i++) {
+          if (fullHouseCards.length==3){
+            break;
+          }
+          if (freq[cards[i][0]]==3){
+            fullHouseCards.push(cards[i]);
+          }
+      }
+      for (let i=0; i<cards.length; i++) {
+          if (fullHouseCards.length==5){
+            break;
+          }
+          if (freq[cards[i][0]]==2){
+            fullHouseCards.push(cards[i]);
+          }
+      }
+      return fullHouseCards;
+    }
+    else{
+      return null;
+    }
+}
+
+function getFlush(cards) {
+    /*
+    Returns the highest flush in a set of cards
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: a 2D array of the five highest cards used to make a flush
+    */
+    let flushCards = null;
+    suits.forEach(suit=> {
+        let sameSuitCards = cards.filter(card=> card[1] === suit); // Filters hand so every card in sameSuitCards will have the same suit
+        if (sameSuitCards.length >= 5) {
+            flushCards = sameSuitCards.slice(0, 5); // If cards are ordered, take best (first) 5
+        }
+    });
+    return flushCards;
+}
+
+function getStraight(cards) {
+    /*
+    Looks for the best 5-card hand with a straight
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: Boolean
+    */
+    // Assume cards are already sorted from highest value to lowest value
+    let straightIndices = [cards[0]];
+    let currValue = face_values[cards[0][0]];
+    for (let i=1; i<cards.length; i++) {
+        if (face_values[cards[i][0]] == currValue-1) {
+            // If going down 1, add to straightindices
+            straightIndices.push(cards[i]);
+            currValue = face_values[cards[i][0]];
+            if (straightIndices.length >= 5) {
+                break; // If 5 straights are found (first set of straights will be largest straight available), leave
+            }
+        } else { // If not, reset it and currValue
+            straightIndices = [cards[i]];
+            currValue = face_values[cards[i][0]];
+        }
+    }
+
+    if (straightIndices.length < 5) {
+        return null
+    }
+    return straightIndices;
+}
+
+function getTriple(cards) {
+    /*
+    Looks for the best 5-card hand with a 3-of-a-kind
+    :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
+    :return: Boolean
+    */
+    return getBestNumOfaKind(cards, 3);
+}
+
+function getTwoPair(cards) {
+    /*
+    Returns the two highest pairs and the card with the highest face value among the remaning three cards
+    :param cards: A 2D array of seven cards in sorted order from highest to lowest face
+    :return: a 2D array of five cards that consists of the two highest pairs and the card with the highest face value among the remaning three cards
+    */
+    let pair = 0;
+    let freq = getFrequencyFaces(cards);
+    for (let face in freq) {
+        if (freq[face] == 2){
+            pair++;
+        }
+    }
+    if (pair>=2){
+        let twoPairCards = [];
+        for (let i=0; i<cards.length; i++) {
+            if (twoPairCards.length==4){
+                break;
+            }
+            if (freq[cards[i][0]]==2){
+                twoPairCards.push(cards[i]);
+            }
+        }
+        for (let i=0; i<cards.length; i++) {
+            if (twoPairCards.length==5){
+                break;
+            }
+            let count=0;
+            for (let j=0; j<twoPairCards.length; j++) {
+                if (twoPairCards[j][0]!=cards[i][0]){
+                    count++;
+                }
+            }
+            if (count==4){
+                twoPairCards.push(cards[i]);
+            }
+        }
+        return twoPairCards;
+    }
+    else{
+      return null;
+    }
+}
+
+function getOnePair(cards) {
+    return getBestNumOfaKind(cards, 2);
+}
+
+/* End of card outcome helpers */
+
 function setup() {
     /*
     Initializes the deck and sets up the table.
-    :param None
+    :param: None
     :return: None
     */
     resetDeck();
