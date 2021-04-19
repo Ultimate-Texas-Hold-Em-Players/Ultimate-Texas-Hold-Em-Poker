@@ -510,6 +510,11 @@ function getQuads(cards) {
 }
 
 function getFullhouse(cards) {
+    /*
+    Returns the tripple and highest pair that make up a full house in a set of cards
+    :param cards: A 2D array of seven cards
+    :return: a 2D array of five cards that consists of the tripple and highest pair used to make a full house
+    */
     let triple = false;
     let pair = false;
     let freq = getFrequencyFaces(cards);
@@ -578,6 +583,11 @@ function getTriple(cards) {
 }
 
 function getTwoPair(cards) {
+  /*
+  Returns the two highest pairs and the card with the highest face value among the remaning three cards
+  :param cards: A 2D array of seven cards
+  :return: a 2D array of five cards that consists of the two highest pairs and the card with the highest face value among the remaning three cards
+  */
   let pair = 0;
   let freq = getFrequencyFaces(cards);
   for (let face in freq) {
