@@ -537,7 +537,7 @@ function getRoyalFlush(cards) {
     :return: A set of cards sorted in decending order such that the royal flush cards are 
     near the start of the array, and the non-royal flush cards are sorted after
     */
-    let onlyFlush = flush(cards).slice(0, 5); // If the cards are flush, then let's use the flush cards.
+    let onlyFlush = getFlush(cards); // Find the best possible flush
     if (!onlyFlush) return null;
     
     //If the best five cards in the flush correspond to royal values, return onlyFlush.
