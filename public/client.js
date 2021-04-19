@@ -512,16 +512,7 @@ function getQuads(cards) {
 function getFullhouse(cards) {
     let triple = false;
     let pair = false;
-    //let testCards = [["10", "C"], ["10", "S"], ["10", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["8", "D"]];
-    //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["5", "D"]];
-    //let testCards = [["10", "C"], ["9", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["10", "H"], ["5", "D"]];
-    //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["10", "H"], ["5", "D"]];
-    //let testCards = [["10", "C"], ["9", "S"], ["8", "D"], ["5", "S"], ["5", "H"], ["Q", "H"], ["5", "D"]];
-    //testCards.sort(compareCards);
-    //console.log("Test cards");
-    //console.log(testCards);
     let freq = getFrequencyFaces(cards);
-    console.log(freq);
     for (let face in freq) {
         if (freq[face] == 3){
           triple=true;
@@ -548,12 +539,9 @@ function getFullhouse(cards) {
             fullHouseCards.push(cards[i]);
           }
       }
-      console.log("Fullhouse cards");
-      console.log(fullHouseCards);
       return fullHouseCards;
     }
     else{
-      console.log("No full house");
       return null;
     }
 
@@ -591,14 +579,7 @@ function getTriple(cards) {
 
 function getTwoPair(cards) {
   let pair = 0;
-  //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["8", "D"]];
-  //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["9", "C"]];
-  //let testCards = [["10", "C"], ["9", "S"], ["9", "D"], ["5", "S"], ["6", "H"], ["A", "H"], ["4", "D"]];
-  //testCards.sort(compareCards);
-  //console.log("Test cards");
-  //console.log(testCards);
   let freq = getFrequencyFaces(cards);
-  console.log(freq);
   for (let face in freq) {
       if (freq[face] == 2){
         pair++;
@@ -628,12 +609,9 @@ function getTwoPair(cards) {
         twoPairCards.push(cards[i]);
       }
     }
-    console.log("TwoPair cards");
-    console.log(twoPairCards);
     return twoPairCards;
   }
   else{
-    console.log("No two pair");
     return null;
   }
 }
