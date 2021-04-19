@@ -133,7 +133,7 @@ function deal() {
     let thirdButton = document.getElementById(CHECK_BUTTON);
     let fourthButton = document.getElementById(BET3_BUTTON);
     let fifthButton = document.getElementById(BET4_BUTTON);
-    
+
     secondButton.classList.add("hide");
     thirdButton.classList.remove("hide");
     fourthButton.classList.remove("hide");
@@ -236,7 +236,7 @@ function findBestHand(player) {
     let wholeHand = hand[COMMUNITY].concat(hand[player]);
     wholeHand.sort(compareCards);
     console.log("sorted whole cards of player ", player, wholeHand)
-    
+
     let royalFlushHand = getRoyalFlush(wholeHand);
     if (royalFlushHand) {
         return [royalFlushHand, "royal_flush"];
@@ -281,7 +281,7 @@ function findBestHand(player) {
     if (onePair) {
         return [onePair, "one_pair"];
     }
-    
+
     // If lower than a pair
     return [getBestFaceValueHand(wholeHand, 5), "lower_than_one_pair"];
 }
@@ -510,7 +510,55 @@ function getQuads(cards) {
 }
 
 function getFullhouse(cards) {
-    return null;
+    let triple = false;
+    let pair = false;
+    //let testCards = [["10", "C"], ["10", "S"], ["10", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["8", "D"]];
+    //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["2", "C"], ["5", "D"]];
+    //let testCards = [["10", "C"], ["9", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["10", "H"], ["5", "D"]];
+    //let testCards = [["10", "C"], ["10", "S"], ["9", "D"], ["5", "S"], ["5", "H"], ["10", "H"], ["5", "D"]];
+    //let testCards = [["10", "C"], ["9", "S"], ["8", "D"], ["5", "S"], ["5", "H"], ["Q", "H"], ["5", "D"]];
+    //testCards.sort(compareCards);
+    //console.log("Test cards");
+    //console.log(testCards);
+    let freq = getFrequencyFaces(cards);
+    console.log(freq);
+    for (let face in freq) {
+        if (freq[face] == 3){
+          triple=true;
+        }
+        if (freq[face] == 2){
+          pair=true;
+        }
+    }
+    if ((triple) && (pair)){
+      let fullHouseCards = [];
+      //i=(Object.keys(freq).length)-1
+      for (let i=0; i<cards.length; i++) {
+          if (fullHouseCards.length==3){
+            break;
+          }
+          if (freq[cards[i][0]]==3){
+            fullHouseCards.push(cards[i]);
+          }
+      }
+      for (let i=0; i<cards.length; i++) {
+          if (fullHouseCards.length==5){
+            break;
+          }
+          console.log(freq[cards[i][0]]);
+          if (freq[cards[i][0]]==2){
+            fullHouseCards.push(cards[i]);
+          }
+      }
+      console.log("Fullhouse cards");
+      console.log(fullHouseCards);
+      return fullHouseCards;
+    }
+    else{
+      console.log("No full house");
+      return null;
+    }
+
 }
 
 function getFlush(cards) {
