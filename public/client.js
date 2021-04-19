@@ -542,7 +542,7 @@ function getRoyalFlush(cards) {
     
     //If the best five cards in the flush correspond to royal values, return onlyFlush.
     if (onlyFlush.filter(card=> (card[0]>=face_values['10']) && (card[0]<=face_values['A'])).length === 5)
-        return cards;
+        return onlyFlush;
     
     return null;
 }
@@ -588,7 +588,45 @@ function getQuads(cards) {
 }
 
 function getFullhouse(cards) {
-    return null;
+    /*
+    Returns the tripple and highest pair that make up a full house in a set of cards
+    :param cards: A 2D array of seven cards in sorted order from highest to lowest face
+    :return: a 2D array of five cards that consists of the tripple and highest pair used to make a full house
+    */
+    let triple = false;
+    let pair = false;
+    let freq = getFrequencyFaces(cards);
+    for (let face in freq) {
+        if (freq[face] == 3){
+          triple=true;
+        }
+        if (freq[face] == 2){
+          pair=true;
+        }
+    }
+    if ((triple) && (pair)){
+      let fullHouseCards = [];
+      for (let i=0; i<cards.length; i++) {
+          if (fullHouseCards.length==3){
+            break;
+          }
+          if (freq[cards[i][0]]==3){
+            fullHouseCards.push(cards[i]);
+          }
+      }
+      for (let i=0; i<cards.length; i++) {
+          if (fullHouseCards.length==5){
+            break;
+          }
+          if (freq[cards[i][0]]==2){
+            fullHouseCards.push(cards[i]);
+          }
+      }
+      return fullHouseCards;
+    }
+    else{
+      return null;
+    }
 }
 
 function getFlush(cards) {
@@ -646,7 +684,47 @@ function getTriple(cards) {
 }
 
 function getTwoPair(cards) {
-    return null;
+    /*
+    Returns the two highest pairs and the card with the highest face value among the remaning three cards
+    :param cards: A 2D array of seven cards in sorted order from highest to lowest face
+    :return: a 2D array of five cards that consists of the two highest pairs and the card with the highest face value among the remaning three cards
+    */
+    let pair = 0;
+    let freq = getFrequencyFaces(cards);
+    for (let face in freq) {
+        if (freq[face] == 2){
+            pair++;
+        }
+    }
+    if (pair>=2){
+        let twoPairCards = [];
+        for (let i=0; i<cards.length; i++) {
+            if (twoPairCards.length==4){
+                break;
+            }
+            if (freq[cards[i][0]]==2){
+                twoPairCards.push(cards[i]);
+            }
+        }
+        for (let i=0; i<cards.length; i++) {
+            if (twoPairCards.length==5){
+                break;
+            }
+            let count=0;
+            for (let j=0; j<twoPairCards.length; j++) {
+                if (twoPairCards[j][0]!=cards[i][0]){
+                    count++;
+                }
+            }
+            if (count==4){
+                twoPairCards.push(cards[i]);
+            }
+        }
+        return twoPairCards;
+    }
+    else{
+      return null;
+    }
 }
 
 function getOnePair(cards) {
