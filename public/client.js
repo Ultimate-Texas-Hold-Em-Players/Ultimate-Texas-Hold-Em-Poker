@@ -229,7 +229,6 @@ function handleInput(multiplier){
     document.getElementById(BLIND).value = anteBet;
   }
   document.getElementById(ANTE).classList.add("readonly");
-  document.getElementById(BLIND).classList.add("readonly");
   document.getElementById(TRIPS).classList.add("readonly");
 
   if (multiplier==1 || multiplier==2 || multiplier==3 || multiplier==4){
@@ -258,7 +257,11 @@ function getPayout(multiplier) {
   }
 
   if (multiplier==0){
-    endTotal = (-2)*parseInt(anteBet) + tripsBet;
+    if (!dealerQualify){
+      endTotal = (-1)*parseInt(anteBet) + tripsBet;
+    }else{
+      endTotal = (-2)*parseInt(anteBet) + tripsBet;
+    }
     if (endTotal>=0){
       finalMsg ="You have won $"+endTotal;
     }
@@ -271,7 +274,12 @@ function getPayout(multiplier) {
     if (blindQualify<0){
       blindBet *= -1;
     }
-    endTotal =  blindBet + tripsBet - parseInt(anteBet) - parseInt(playBet);
+    if (!dealerQualify){
+        endTotal =  blindBet + tripsBet - parseInt(playBet);
+    }else{
+      endTotal =  blindBet + tripsBet - parseInt(anteBet) - parseInt(playBet);
+    }
+
     if (endTotal>=0){
       finalMsg ="You have won $"+endTotal;
     }
@@ -350,7 +358,7 @@ function endRound(multiplier) {
     }
     let player_payout = getPayout(multiplier);
 
-    document.getElementById(STATUS_BAR).innerHTML = `${winMsg} $${player_payout}.`;
+    document.getElementById(STATUS_BAR).innerHTML = `${winMsg} ${player_payout}.`;
 }
 
 function findBestHand(player) {
