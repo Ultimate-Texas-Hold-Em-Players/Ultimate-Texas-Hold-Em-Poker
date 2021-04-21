@@ -219,6 +219,9 @@ function bet(multiplier) {
 }
 
 function handleInput(multiplier){
+  /*
+  Make it so the bets are readonly after the user bets or checks and make the anteBet and blindBet equal
+  */
   let anteBet =  document.getElementById(ANTE).value;
   let blindBet =  document.getElementById(BLIND).value;
   let tripsBet =  document.getElementById(TRIPS).value;
@@ -229,24 +232,22 @@ function handleInput(multiplier){
   document.getElementById(BLIND).classList.add("readonly");
   document.getElementById(TRIPS).classList.add("readonly");
 
-  if (multiplier==1 || multiplier==2 || multiplier==3 || multiplier==4 ){
+  if (multiplier==1 || multiplier==2 || multiplier==3 || multiplier==4){
     document.getElementById(PLAY).value = multiplier * anteBet;
   }
 
 }
 
 function getPayout(multiplier) {
+  /*
+  Decide  how much player wins/loses based on the cards and prepare the final message
+  */
   let anteBet =  document.getElementById(ANTE).value;
   let blindBet =  document.getElementById(BLIND).value;
   let playBet =  document.getElementById(PLAY).value;
   let tripsBet =  document.getElementById(TRIPS).value;
   let endTotal = 0;
   let finalMsg = "";
-  console.log(anteBet);
-  console.log(blindBet);
-  console.log(playBet);
-  console.log(tripsBet);
-  console.log(multiplier);
   if (tripsQualify>-1){
     tripsBet = parseInt(tripsBet)*tripsPayoff[tripsQualify];
   } else{
