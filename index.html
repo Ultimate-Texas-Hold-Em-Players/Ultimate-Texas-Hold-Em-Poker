@@ -15,11 +15,8 @@
 <div class="container-fluid pt-5 pl-4 pr-4 pb-5 rounded text-light">
     <div class="col">
         <div class="col">
-            <div class="row my-3 p-4 rounded justify-content-center" style="background-color: #BD0909;">
-                <h1 id="status">Status bar</h1>
-            </div>
             <div class="row">
-                <div class="col-md-auto mr-3 p-4" id="infoTable">
+                <div class="col-md-auto mr-3 pl-4" id="infoTable">
                     <div>
                         <h1>Ultimate Texas Hold 'Em Poker</h1>
                     </div>
@@ -121,8 +118,11 @@
                             </div>
                     </div>
                     <div class="row mt-3">
-                        <div class="col p-3 text-center shadow-sm" style="background-color: #BD0909;">
+                        <div class="col p-3 text-center shadow-sm mb-3" style="background-color: #BD0909;">
                             <h2>Play</h2>
+
+                            <input id="card-cover" class="hide" type="file">
+                            <button id="card-cover-button" class="btn btn-default" type="button" onclick="getImage()">Change Card Cover</button>
                             <button id="first-button" class="btn btn-default" type="button" onclick="setup()">Reset Cards</button>
                             <button id="second-button" class="btn btn-default" type="button" onclick="deal()">Deal</button>
                             <button id="third-button" class="btn btn-default hide" type="button" onclick="check()">Check</button>
@@ -154,6 +154,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row my-3 p-4 rounded justify-content-center" style="background-color: #BD0909;">
+                <h1 id="status">Status bar</h1>
             </div>
         </div>
     </div>
