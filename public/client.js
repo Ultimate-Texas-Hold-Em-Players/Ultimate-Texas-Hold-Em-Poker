@@ -110,6 +110,10 @@ function resetDeck() {
 
     // Set status bar
     document.getElementById(STATUS_BAR).innerHTML = "Press \"Deal\" to Start";
+
+    //make the inputs to the ante and trips bets accessable again
+    document.getElementById(ANTE).readOnly = false;
+    document.getElementById(TRIPS).readOnly = false;
 }
 
 function showEmptyCards(owner, num) {
@@ -228,9 +232,8 @@ function handleInput(multiplier){
   if (anteBet!=blindBet){
     document.getElementById(BLIND).value = anteBet;
   }
-  document.getElementById(ANTE).classList.add("readonly");
-  document.getElementById(TRIPS).classList.add("readonly");
-
+  document.getElementById(ANTE).readOnly = true;
+  document.getElementById(TRIPS).readOnly = true;
   if (multiplier==1 || multiplier==2 || multiplier==3 || multiplier==4){
     document.getElementById(PLAY).value = multiplier * anteBet;
   }
@@ -247,6 +250,8 @@ function getPayout(multiplier) {
   let tripsBet =  document.getElementById(TRIPS).value;
   let endTotal = 0;
   let finalMsg = "";
+  let payCalcMsg = "";
+  console.log("Pay Calculation:");
   if (tripsQualify>-1){
     tripsBet = parseInt(tripsBet)*tripsPayoff[tripsQualify];
   } else{
@@ -259,15 +264,33 @@ function getPayout(multiplier) {
   if (multiplier==0){
     if (!dealerQualify){
       endTotal = (-1)*parseInt(anteBet) + tripsBet;
+      payCalcMsg ="Total = "+endTotal+" = -"+parseInt(anteBet)+" (Ante Bet) ";
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
     }else{
       endTotal = (-2)*parseInt(anteBet) + tripsBet;
+      payCalcMsg ="Total = "+endTotal+" = -"+parseInt(anteBet)+" (Ante Bet) -"+anteBet+" (Blind Bet) ";
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
     }
     if (endTotal>=0){
-      finalMsg ="You have won $"+endTotal;
+      finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
     }
     else{
       endTotal *= -1;
-      finalMsg ="You have lost $"+endTotal;
+      finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
     }
   }
   else if (multiplier==1){
@@ -276,16 +299,44 @@ function getPayout(multiplier) {
     }
     if (!dealerQualify){
         endTotal =  blindBet + tripsBet - parseInt(playBet);
+        payCalcMsg ="Total = "+endTotal+" = -"+parseInt(playBet)+" (Play Bet) "+tripsBet+" (Trips bet)";
+        if (blindBet>0){
+          payCalcMsg +="+"+blindBet+" (Blind bet) ";
+        }else{
+          payCalcMsg +=blindBet+" (Blind bet) ";
+        }
+        if (tripsBet>0){
+          payCalcMsg +="+"+tripsBet+" (Trips bet)";
+        }else if (tripsBet==0){
+          payCalcMsg +="-"+tripsBet+" (Trips bet)";
+        }
+        else{
+          payCalcMsg +=tripsBet+" (Trips bet)";
+        }
     }else{
       endTotal =  blindBet + tripsBet - parseInt(anteBet) - parseInt(playBet);
+      payCalcMsg="Total = "+endTotal+" = -"+parseInt(anteBet)+" (Ante Bet) -"+parseInt(playBet)+" (Play Bet) ";
+      if (blindBet>0){
+        payCalcMsg +="+"+blindBet+" (Blind bet) ";
+      }else{
+        payCalcMsg +=blindBet+" (Blind bet) ";
+      }
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
     }
 
     if (endTotal>=0){
-      finalMsg ="You have won $"+endTotal;
+      finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
     }
     else{
       endTotal *= -1;
-      finalMsg ="You have lost $"+endTotal;
+      finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
     }
   }
   else if (multiplier==2){
@@ -294,11 +345,29 @@ function getPayout(multiplier) {
     }
     if (!dealerQualify){
         endTotal = parseInt(playBet) + blindBet + tripsBet;
+        payCalcMsg="Total = "+endTotal+" = "+blindBet+" (Blind Bet) +"+parseInt(playBet)+" (Play Bet) ";
+        if (tripsBet>0){
+          payCalcMsg +="+"+tripsBet+" (Trips bet)";
+        }else if (tripsBet==0){
+          payCalcMsg +="-"+tripsBet+" (Trips bet)";
+        }
+        else{
+          payCalcMsg +=tripsBet+" (Trips bet)";
+        }
     }
     else{
       endTotal = parseInt(anteBet) + parseInt(playBet) + blindBet + tripsBet;
+      payCalcMsg="Total = "+endTotal+" = "+parseInt(anteBet)+" (Ante Bet) +"+blindBet+" (Blind Bet) +"+parseInt(playBet)+" (Play Bet) ";
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
     }
-    finalMsg ="You have won $"+endTotal;
+    finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
   }
   return finalMsg;
 }
