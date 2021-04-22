@@ -147,6 +147,7 @@ function resetDeck() {
     //make the inputs to the ante and trips bets accessable again
     document.getElementById(ANTE).readOnly = false;
     document.getElementById(TRIPS).readOnly = false;
+    document.getElementById(PLAY).value = "";
 }
 
 function showEmptyCards(owner, num) {
