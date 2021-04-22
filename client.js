@@ -103,6 +103,9 @@ setInputFilter(document.getElementById(ANTE), function(value) {
 setInputFilter(document.getElementById(TRIPS), function(value) {
   return /^\d*$/.test(value); });
 
+// Storage the cardcover image
+const { localStorage } = window;
+
 function resetDeck() {
     /*
     Resets the game
@@ -998,9 +1001,20 @@ function getOnePair(cards) {
 
 /* End of card outcome helpers */
 
+/* Card Background helpers */
+
+let getImage = ()=> {
+    /*
+    Psuedo-click on the card-cover-input file input element.
+    :param: None
+    :return: None
+    */
+    document.getElementById('card-cover-input').click();
+}
+
 function setup() {
     /*
-    Initializes the deck and sets up the table.
+    Initializes the deck, sets up file input and sets up the table.
     :param: None
     :return: None
     */
@@ -1008,6 +1022,19 @@ function setup() {
     showEmptyCards(PLAYER, 2);
     showEmptyCards(DEALER, 2);
     showEmptyCards(COMMUNITY, 5);
+
+    document.getElementById('card-cover-input').addEventListener('change', function() {
+        let selectedFile = this.files[0];
+        let reader = new FileReader();
+
+        reader.onload = event=> {
+            document.querySelectorAll('img').forEach(img=> {
+                img.title = selectedFile.name;
+                img.src = event.target.result;
+            });
+        };
+        reader.readAsDataURL(selectedFile);
+    });
 }
 
 window.onload = setup;
