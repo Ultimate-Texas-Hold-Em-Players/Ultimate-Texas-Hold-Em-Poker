@@ -95,11 +95,13 @@ function setInputFilter(textbox, inputFilter) {
   });
 }
 
+//using the setInputFilter on the ante bet input field
 setInputFilter(document.getElementById(ANTE), function(value) {
   return /^\d*$/.test(value); });
 
-  setInputFilter(document.getElementById(TRIPS), function(value) {
-    return /^\d*$/.test(value); });
+//using the setInputFilter on the trips bet input field
+setInputFilter(document.getElementById(TRIPS), function(value) {
+  return /^\d*$/.test(value); });
 
 function resetDeck() {
     /*
