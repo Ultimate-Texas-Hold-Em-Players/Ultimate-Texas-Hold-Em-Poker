@@ -47,6 +47,11 @@ const BET4_BUTTON = "fifth-button";
 const BET2_BUTTON = "sixth-button";
 const BET1_BUTTON = "seventh-button";
 const FOLD_BUTTON = "eighth-button";
+const ANTE = "ante";
+const BLIND = "blind";
+const PLAY = "play";
+const TRIPS = "trips";
+
 // Status constants
 const CHECK0 = "0";
 const CHECK3 = "1";
@@ -61,6 +66,45 @@ let hand = {};
 let communityStatus = CHECK0;
 let communityRevealed = 0; // Last index of revealed cards
 
+//Variables that determine if the player's hand qualifies for the trips and blind bet
+let tripsQualify = -1;
+let tripsPayoff = [3, 5, 6, 8, 30, 40, 50];
+let blindQualify = -1;
+let blindPayoff = [1, 1.5, 3, 10, 50, 500];
+let dealerQualify = false;
+let playerFold = false;
+
+
+function setInputFilter(textbox, inputFilter) {
+  /*
+  Function that restricts input into the ante bet and trips bet fields to just integers
+  */
+  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+    textbox.addEventListener(event, function() {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  });
+}
+
+//using the setInputFilter on the ante bet input field
+setInputFilter(document.getElementById(ANTE), function(value) {
+  return /^\d*$/.test(value); });
+
+//using the setInputFilter on the trips bet input field
+setInputFilter(document.getElementById(TRIPS), function(value) {
+  return /^\d*$/.test(value); });
+
+// Storage the cardcover image
+const { localStorage } = window;
 
 function resetDeck() {
     /*
@@ -99,6 +143,10 @@ function resetDeck() {
 
     // Set status bar
     document.getElementById(STATUS_BAR).innerHTML = "Press \"Deal\" to Start";
+
+    //make the inputs to the ante and trips bets accessable again
+    document.getElementById(ANTE).readOnly = false;
+    document.getElementById(TRIPS).readOnly = false;
 }
 
 function showEmptyCards(owner, num) {
@@ -136,11 +184,12 @@ function deal() {
     :return: None
     */
     revealPlayer(PLAYER);
+    handleInput(-2);
     let secondButton = document.getElementById(DEAL_BUTTON);
     let thirdButton = document.getElementById(CHECK_BUTTON);
     let fourthButton = document.getElementById(BET3_BUTTON);
     let fifthButton = document.getElementById(BET4_BUTTON);
-    
+
     secondButton.classList.add("hide");
     thirdButton.classList.remove("hide");
     fourthButton.classList.remove("hide");
@@ -155,6 +204,8 @@ function check() {
     :param None
     :return: None
     */
+    handleInput(0);
+
     if (communityStatus == CHECK0) {
         // If no cards checked, check first 3
         communityStatus = CHECK3;
@@ -182,6 +233,10 @@ function bet(multiplier) {
     :param Multiplier: Bet multiplier; how much the player will win/lose.
     :return: None
     */
+    if (multiplier==-1){
+      playerFold = true;
+    }
+    handleInput(multiplier);
     revealRest();
     endRound(multiplier);
 
@@ -193,6 +248,170 @@ function bet(multiplier) {
     document.getElementById(BET2_BUTTON).classList.add("hide");
     document.getElementById(BET1_BUTTON).classList.add("hide");
     document.getElementById(FOLD_BUTTON).classList.add("hide");
+
+    //reset variables
+    tripsQualify = -1;
+    blindQualify = -1;
+    dealerQualify = false;
+    playerFold = false;
+}
+
+function handleInput(multiplier){
+  /*
+  Make it so the bets are readonly after the user bets or checks and make the anteBet and blindBet equal
+  */
+  let anteBet =  document.getElementById(ANTE).value;
+  let blindBet =  document.getElementById(BLIND).value;
+  let tripsBet =  document.getElementById(TRIPS).value;
+  if (anteBet!=blindBet){
+    document.getElementById(BLIND).value = anteBet;
+  }
+  document.getElementById(ANTE).readOnly = true;
+  document.getElementById(TRIPS).readOnly = true;
+  if (multiplier==1 || multiplier==2 || multiplier==3 || multiplier==4){
+    document.getElementById(PLAY).value = multiplier * anteBet;
+  }
+
+}
+
+
+
+function getPayout(multiplier) {
+  /*
+  Decide  how much player wins/loses based on the cards and prepare the final message
+  */
+  let anteBet =  document.getElementById(ANTE).value;
+  let blindBet =  document.getElementById(BLIND).value;
+  let playBet =  document.getElementById(PLAY).value;
+  let tripsBet =  document.getElementById(TRIPS).value;
+  let endTotal = 0;
+  let finalMsg = "";
+  let payCalcMsg = "";
+  console.log("Pay Calculation:");
+  if (tripsQualify>-1){
+    tripsBet = parseInt(tripsBet)*tripsPayoff[tripsQualify];
+  } else{
+    tripsBet = parseInt(tripsBet)*(-1);
+  }
+  if (blindQualify>-1){
+    blindBet = parseInt(blindBet)*blindPayoff[blindQualify];
+  }
+
+  if (multiplier==0){
+    if (!dealerQualify){
+      endTotal = (-1)*parseInt(anteBet) + tripsBet;
+      payCalcMsg ="Total = "+endTotal+" = -"+parseInt(anteBet)+" (Ante Bet) ";
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
+    }else{
+      endTotal = (-2)*parseInt(anteBet) + tripsBet;
+      payCalcMsg ="Total = "+endTotal+" = -"+parseInt(anteBet)+" (Ante Bet) -"+anteBet+" (Blind Bet) ";
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
+    }
+    if (endTotal>=0){
+      finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
+    }
+    else{
+      endTotal *= -1;
+      finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
+    }
+  }
+  else if (multiplier==1){
+    if (blindQualify<0){
+      blindBet *= -1;
+    }
+    if (!dealerQualify){
+        endTotal =  blindBet + tripsBet - parseInt(playBet);
+        payCalcMsg ="Total = "+endTotal+" = -"+parseInt(playBet)+" (Play Bet) "+tripsBet+" (Trips bet)";
+        if (blindBet>0){
+          payCalcMsg +="+"+blindBet+" (Blind bet) ";
+        }else{
+          payCalcMsg +=blindBet+" (Blind bet) ";
+        }
+        if (tripsBet>0){
+          payCalcMsg +="+"+tripsBet+" (Trips bet)";
+        }else if (tripsBet==0){
+          payCalcMsg +="-"+tripsBet+" (Trips bet)";
+        }
+        else{
+          payCalcMsg +=tripsBet+" (Trips bet)";
+        }
+    }else{
+      endTotal =  blindBet + tripsBet - parseInt(anteBet) - parseInt(playBet);
+      payCalcMsg="Total = "+endTotal+" = -"+parseInt(anteBet)+" (Ante Bet) -"+parseInt(playBet)+" (Play Bet) ";
+      if (blindBet>0){
+        payCalcMsg +="+"+blindBet+" (Blind bet) ";
+      }else{
+        payCalcMsg +=blindBet+" (Blind bet) ";
+      }
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
+    }
+
+    if (endTotal>=0){
+      finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
+    }
+    else{
+      endTotal *= -1;
+      finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
+    }
+  }
+  else if (multiplier==2){
+    if (blindQualify<0){
+      blindBet = 0;
+    }
+    if (!dealerQualify){
+        endTotal = parseInt(playBet) + blindBet + tripsBet;
+        payCalcMsg="Total = "+endTotal+" = "+blindBet+" (Blind Bet) +"+parseInt(playBet)+" (Play Bet) ";
+        if (tripsBet>0){
+          payCalcMsg +="+"+tripsBet+" (Trips bet)";
+        }else if (tripsBet==0){
+          payCalcMsg +="-"+tripsBet+" (Trips bet)";
+        }
+        else{
+          payCalcMsg +=tripsBet+" (Trips bet)";
+        }
+    }
+    else{
+      endTotal = parseInt(anteBet) + parseInt(playBet) + blindBet + tripsBet;
+      payCalcMsg="Total = "+endTotal+" = "+parseInt(anteBet)+" (Ante Bet) +"+blindBet+" (Blind Bet) +"+parseInt(playBet)+" (Play Bet) ";
+      if (tripsBet>0){
+        payCalcMsg +="+"+tripsBet+" (Trips bet)";
+      }else if (tripsBet==0){
+        payCalcMsg +="-"+tripsBet+" (Trips bet)";
+      }
+      else{
+        payCalcMsg +=tripsBet+" (Trips bet)";
+      }
+    }
+    if (endTotal>=0){
+      finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
+    }
+    else{
+      endTotal *= -1;
+      finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
+    }
+  }
+  return finalMsg;
 }
 
 function endRound(multiplier) {
@@ -223,16 +442,20 @@ function endRound(multiplier) {
     // PLAYER vs DEALER
     if (hand_values[best_player_hand_value] > hand_values[best_dealer_hand_value]) {
         winMsg = "Player wins!";
+        multiplier = 2;
     } else if (hand_values[best_player_hand_value] < hand_values[best_dealer_hand_value]) {
         winMsg = "Dealer wins!";
+        multiplier = 1;
     } else {
         // Compare 1st indices, 2nd indices, 3rd and so on until the card values do not match between player and dealer
         for (let i=0; i<best_player_hand.length; i++) {
             if (face_values[best_player_hand[i][0]] > face_values[best_dealer_hand[i][0]]) {
                 winMsg = `Player wins with ${best_player_hand[i][0]}-High!`;
+                multiplier = 2;
                 break;
             } else if (face_values[best_player_hand[i][0]] < face_values[best_dealer_hand[i][0]]) {
                 winMsg = `Dealer wins with ${best_dealer_hand[i][0]}-High!`;
+                multiplier = 1;
                 break;
             }
         }
@@ -241,10 +464,12 @@ function endRound(multiplier) {
             winMsg = "It's a tie!";
         }
     }
+    if (playerFold==true){
+      multiplier = 0;
+    }
+    let player_payout = getPayout(multiplier);
 
-    let player_payout = getPayout();
-
-    document.getElementById(STATUS_BAR).innerHTML = `${winMsg} You have won/lost $${player_payout}.`;
+    document.getElementById(STATUS_BAR).innerHTML = `${winMsg} ${player_payout}.`;
 }
 
 function findBestHand(player) {
@@ -257,52 +482,99 @@ function findBestHand(player) {
     let wholeHand = hand[COMMUNITY].concat(hand[player]);
     wholeHand.sort(compareCards);
     console.log("sorted whole cards of player ", player, wholeHand)
-    
+
     let royalFlushHand = getRoyalFlush(wholeHand);
     if (royalFlushHand) {
+        if (player==PLAYER){
+          tripsQualify = 6;
+          blindQualify = 5;
+        } else{
+          dealerQualify = true;
+        }
         return [royalFlushHand, "royal_flush"];
     }
 
     let straightFlushHand = getStraightFlush(wholeHand);
     if (straightFlushHand) {
+        if (player==PLAYER){
+          tripsQualify = 5;
+          blindQualify = 4;
+        } else{
+          dealerQualify = true;
+      }
         return [straightFlushHand, "straight_flush"];
     }
 
     let quadsHand = getQuads(wholeHand);
     if (quadsHand) {
+        if (player==PLAYER){
+          tripsQualify = 4;
+          blindQualify = 3;
+        } else{
+          dealerQualify = true;
+        }
         return [quadsHand, "quads"];
     }
 
     let fullHouse = getFullhouse(wholeHand);
     if (fullHouse) {
+        if (player==PLAYER){
+          tripsQualify = 3;
+          blindQualify = 2;
+        } else{
+          dealerQualify = true;
+        }
         return [fullHouse, "full_house"];
     }
 
     let flushHand = getFlush(wholeHand);
     if (flushHand) {
+        if (player==PLAYER){
+          tripsQualify = 2;
+          blindQualify = 1;
+        } else{
+          dealerQualify = true;
+        }
         return [flushHand, "flush"];
     }
 
     let straightHand = getStraight(wholeHand);
     if (straightHand) {
+        if (player==PLAYER){
+          tripsQualify = 1;
+          blindQualify = 0;
+        } else{
+          dealerQualify = true;
+        }
         return [straightHand, "straight"];
     }
 
     let tripleHand = getTriple(wholeHand);
     if (tripleHand) {
+        if (player==PLAYER){
+          tripsQualify = 0;
+        } else{
+          dealerQualify = true;
+        }
         return [tripleHand, "triple"];
     }
 
     let twoPair = getTwoPair(wholeHand);
     if (twoPair) {
+        if (player==DEALER){
+          dealerQualify = true;
+        }
         return [twoPair, "two_pair"];
     }
 
     let onePair = getOnePair(wholeHand);
     if (onePair) {
+        if (player==DEALER){
+          dealerQualify = true;
+        }
         return [onePair, "one_pair"];
     }
-    
+
     // If lower than a pair
     return [getBestFaceValueHand(wholeHand, 5), "lower_than_one_pair"];
 }
@@ -336,10 +608,6 @@ function formatHandLabel(cards) {
         }
     }
     return cardStr;
-}
-
-function getPayout() {
-    return 0;
 }
 
 function revealRest() {
@@ -534,16 +802,16 @@ function getRoyalFlush(cards) {
     /*
     Looks for the royal flush hand in a set of 7 cards
     :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
-    :return: A set of cards sorted in decending order such that the royal flush cards are 
+    :return: A set of cards sorted in decending order such that the royal flush cards are
     near the start of the array, and the non-royal flush cards are sorted after
     */
     let onlyFlush = getFlush(cards); // Find the best possible flush
     if (!onlyFlush) return null;
-    
+
     //If the best five cards in the flush correspond to royal values, return onlyFlush.
     if (onlyFlush.filter(card=> (card[0]>=face_values['10']) && (card[0]<=face_values['A'])).length === 5)
         return onlyFlush;
-    
+
     return null;
 }
 
@@ -733,9 +1001,20 @@ function getOnePair(cards) {
 
 /* End of card outcome helpers */
 
+/* Card Background helpers */
+
+let getImage = ()=> {
+    /*
+    Psuedo-click on the card-cover-input file input element.
+    :param: None
+    :return: None
+    */
+    document.getElementById('card-cover-input').click();
+}
+
 function setup() {
     /*
-    Initializes the deck and sets up the table.
+    Initializes the deck, sets up file input and sets up the table.
     :param: None
     :return: None
     */
@@ -743,6 +1022,19 @@ function setup() {
     showEmptyCards(PLAYER, 2);
     showEmptyCards(DEALER, 2);
     showEmptyCards(COMMUNITY, 5);
+
+    document.getElementById('card-cover-input').addEventListener('change', function() {
+        let selectedFile = this.files[0];
+        let reader = new FileReader();
+
+        reader.onload = event=> {
+            document.querySelectorAll('img').forEach(img=> {
+                img.title = selectedFile.name;
+                img.src = event.target.result;
+            });
+        };
+        reader.readAsDataURL(selectedFile);
+    });
 }
 
 window.onload = setup;
