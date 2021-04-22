@@ -61,6 +61,9 @@ let hand = {};
 let communityStatus = CHECK0;
 let communityRevealed = 0; // Last index of revealed cards
 
+// Storage the cardcover image
+const { localStorage } = window;
+
 
 function resetDeck() {
     /*
@@ -736,12 +739,17 @@ function getOnePair(cards) {
 /* Card Background helpers */
 
 let getImage = ()=> {
-    document.getElementById('card-cover').click();
+    /*
+    Psuedo-click on the card-cover-input file input element.
+    :param: None
+    :return: None
+    */
+    document.getElementById('card-cover-input').click();
 }
 
 function setup() {
     /*
-    Initializes the deck and sets up the table.
+    Initializes the deck, sets up file input and sets up the table.
     :param: None
     :return: None
     */
@@ -749,15 +757,19 @@ function setup() {
     showEmptyCards(PLAYER, 2);
     showEmptyCards(DEALER, 2);
     showEmptyCards(COMMUNITY, 5);
-    // document.querySelector('input[type="file"]').addEventListener('change', function() {
-    //     if (this.files && this.files[0]) {
-    //         let img = document.querySelector('img');img.onload = () => {
-    //           URL.revokeObjectURL(img.src);  // no longer needed, free memory
-    //       }
+    
+    document.getElementById('card-cover-input').addEventListener('change', function() {
+        let selectedFile = this.files[0];
+        let reader = new FileReader();
 
-    //       img.src = URL.createObjectURL(this.files[0]); // set src to blob url
-    //     }
-    // })
+        reader.onload = event=> {
+            document.querySelectorAll('img').forEach(img=> {
+                img.title = selectedFile.name;
+                img.src = event.target.result;
+            });
+        };
+        reader.readAsDataURL(selectedFile);
+    });
 }
 
 window.onload = setup;
