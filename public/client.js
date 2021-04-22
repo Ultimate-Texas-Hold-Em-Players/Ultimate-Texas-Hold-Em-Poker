@@ -73,6 +73,34 @@ let blindQualify = -1;
 let blindPayoff = [1, 1.5, 3, 10, 50, 500];
 let dealerQualify = false;
 let playerFold = false;
+
+
+function setInputFilter(textbox, inputFilter) {
+  /*
+  Function that restricts input into the ante bet and trips bet fields to just integers
+  */
+  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+    textbox.addEventListener(event, function() {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  });
+}
+
+setInputFilter(document.getElementById(ANTE), function(value) {
+  return /^\d*$/.test(value); });
+
+  setInputFilter(document.getElementById(TRIPS), function(value) {
+    return /^\d*$/.test(value); });
+
 function resetDeck() {
     /*
     Resets the game
@@ -151,6 +179,7 @@ function deal() {
     :return: None
     */
     revealPlayer(PLAYER);
+    handleInput(-2);
     let secondButton = document.getElementById(DEAL_BUTTON);
     let thirdButton = document.getElementById(CHECK_BUTTON);
     let fourthButton = document.getElementById(BET3_BUTTON);
@@ -239,6 +268,8 @@ function handleInput(multiplier){
   }
 
 }
+
+
 
 function getPayout(multiplier) {
   /*
@@ -367,7 +398,13 @@ function getPayout(multiplier) {
         payCalcMsg +=tripsBet+" (Trips bet)";
       }
     }
-    finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
+    if (endTotal>=0){
+      finalMsg ="You have won $"+endTotal+"</br>"+payCalcMsg;
+    }
+    else{
+      endTotal *= -1;
+      finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
+    }
   }
   return finalMsg;
 }
