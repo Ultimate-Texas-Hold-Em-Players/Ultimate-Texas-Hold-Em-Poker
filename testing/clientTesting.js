@@ -305,16 +305,16 @@ function getRoyalFlush(cards) {
     /*
     Looks for the royal flush hand in a set of 7 cards
     :param cards: Object representing a 7-card hand in sorted order from highest to lowest face
-    :return: A set of cards sorted in decending order such that the royal flush cards are 
+    :return: A set of cards sorted in decending order such that the royal flush cards are
     near the start of the array, and the non-royal flush cards are sorted after
     */
     let onlyFlush = getFlush(cards); // Find the best possible flush
     if (!onlyFlush) return null;
-    
+
     //If the best five cards in the flush correspond to royal values, return onlyFlush.
-    if (onlyFlush.filter(card=> (card[0]>=face_values['10']) && (card[0]<=face_values['A'])).length === 5)
+    if (onlyFlush.filter(card=> (face_values[card[0]]>=face_values['10']) && (face_values[card[0]]<=face_values['A'])).length === 5)
         return onlyFlush;
-    
+
     return null;
 }
 

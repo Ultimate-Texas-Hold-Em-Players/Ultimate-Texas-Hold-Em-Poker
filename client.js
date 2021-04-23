@@ -850,7 +850,7 @@ function getRoyalFlush(cards) {
     if (!onlyFlush) return null;
 
     //If the best five cards in the flush correspond to royal values, return onlyFlush.
-    if (onlyFlush.filter(card=> (card[0]>=face_values['10']) && (card[0]<=face_values['A'])).length === 5)
+    if (onlyFlush.filter(card=> (face_values[card[0]]>=face_values['10']) && (face_values[card[0]]<=face_values['A'])).length === 5)
         return onlyFlush;
 
     return null;
