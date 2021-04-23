@@ -82,12 +82,19 @@ th {
     text-align: center;
 }
 
-#antediv, #blinddiv {
+#walletdiv {
+    border: 8px solid #00ff00;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+
+#antediv, #blinddiv, #walletdiv {
     width: 128px;
     height: 94px;
 }
 
-#blinddiv {
+#blinddiv, #walletdiv {
     margin-right: 40px;
 }
 
