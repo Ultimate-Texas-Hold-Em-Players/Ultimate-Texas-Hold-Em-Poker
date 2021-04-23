@@ -373,7 +373,7 @@ function getPayout(multiplier) {
     }
     if (!dealerQualify){
         endTotal =  blindBet + tripsBet - parseInt(playBet);
-        payCalcMsg ="Total = "+endTotal+" = -"+parseInt(playBet)+" (Play Bet) "+tripsBet+" (Trips bet)";
+        payCalcMsg ="Total = "+endTotal+" = -"+parseInt(playBet)+" (Play Bet) ";
         if (blindBet>0){
           payCalcMsg +="+"+blindBet+" (Blind bet) ";
         }else{

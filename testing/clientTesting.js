@@ -114,8 +114,6 @@ function showEmptyCards(owner, num) {
     for (let i=0; i<num; i++) {
         newCard(owner);
     }
-    console.log("Used cards:", usedCards);
-    console.log("Hands:", hand);
 }
 
 function endRound(multiplier) {
@@ -155,7 +153,6 @@ function findBestHand(player) {
     */
     let wholeHand = hand[COMMUNITY].concat(hand[player]);
     wholeHand.sort(compareCards);
-    console.log("sorted whole cards of player ", player, wholeHand)
     
     let royalFlushHand = getRoyalFlush(wholeHand);
     if (royalFlushHand) {
@@ -312,8 +309,10 @@ function getRoyalFlush(cards) {
     if (!onlyFlush) return null;
 
     //If the best five cards in the flush correspond to royal values, return onlyFlush.
-    if (onlyFlush.filter(card=> (face_values[card[0]]>=face_values['10']) && (face_values[card[0]]<=face_values['A'])).length === 5)
+    if (onlyFlush.filter(card=> (face_values[card[0]]>=face_values['10']) && (face_values[card[0]]<=face_values['A'])).length === 5) {
+        console.log("royal flush found:",onlyFlush);
         return onlyFlush;
+    }
 
     return null;
 }
