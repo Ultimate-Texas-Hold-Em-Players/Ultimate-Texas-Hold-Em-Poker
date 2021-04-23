@@ -154,6 +154,8 @@ function resetDeck() {
     blindQualify = -1;
     dealerQualify = false;
     playerFold = false;
+
+    document.getElementById(PLAY).value = "";
 }
 
 function showEmptyCards(owner, num) {
