@@ -51,7 +51,7 @@ const ANTE = "ante";
 const BLIND = "blind";
 const PLAY = "play";
 const TRIPS = "trips";
-
+const WALLET = "wallet";
 // Status constants
 const CHECK0 = "0";
 const CHECK3 = "1";
@@ -73,6 +73,7 @@ let blindQualify = -1;
 let blindPayoff = [1, 1.5, 3, 10, 50, 500];
 let dealerQualify = false;
 let playerFold = false;
+
 
 
 function setInputFilter(textbox, inputFilter) {
@@ -147,6 +148,12 @@ function resetDeck() {
     //make the inputs to the ante and trips bets accessable again
     document.getElementById(ANTE).readOnly = false;
     document.getElementById(TRIPS).readOnly = false;
+
+    //reset variables
+    tripsQualify = -1;
+    blindQualify = -1;
+    dealerQualify = false;
+    playerFold = false;
 }
 
 function showEmptyCards(owner, num) {
@@ -177,25 +184,52 @@ function revealCard(player, face, suit, index) {
     children[index].innerHTML = card.innerHTML;
 }
 
+function checkWallet(){
+  /*
+  Checking to see if the player can make the bets they entered from the player's current balance
+  */
+  let currentMoney =  document.getElementById(WALLET).value;
+  let bettingTotal = parseInt(document.getElementById(ANTE).value)+parseInt(document.getElementById(BLIND).value)+parseInt(document.getElementById(TRIPS).value)+parseInt(document.getElementById(ANTE).value);
+  if (parseInt(currentMoney)<bettingTotal){
+    return false;
+  }
+  else{
+    return true;
+  }
+}
+
+function updateWallet(roundTotal){
+  /*
+  Updating the player's current balance
+  */
+  let currentBalance = document.getElementById(WALLET).value;
+  document.getElementById(WALLET).value = parseInt(currentBalance) + roundTotal;
+}
+
 function deal() {
     /*
     The player is dealt cards
     :param None
     :return: None
     */
-    revealPlayer(PLAYER);
-    handleInput(-2);
-    let secondButton = document.getElementById(DEAL_BUTTON);
-    let thirdButton = document.getElementById(CHECK_BUTTON);
-    let fourthButton = document.getElementById(BET3_BUTTON);
-    let fifthButton = document.getElementById(BET4_BUTTON);
+    if (checkWallet()){
+      revealPlayer(PLAYER);
+      handleInput(-2);
+      let secondButton = document.getElementById(DEAL_BUTTON);
+      let thirdButton = document.getElementById(CHECK_BUTTON);
+      let fourthButton = document.getElementById(BET3_BUTTON);
+      let fifthButton = document.getElementById(BET4_BUTTON);
 
-    secondButton.classList.add("hide");
-    thirdButton.classList.remove("hide");
-    fourthButton.classList.remove("hide");
-    fifthButton.classList.remove("hide");
+      secondButton.classList.add("hide");
+      thirdButton.classList.remove("hide");
+      fourthButton.classList.remove("hide");
+      fifthButton.classList.remove("hide");
 
-    document.getElementById(STATUS_BAR).innerHTML = "Check or Bet?";
+      document.getElementById(STATUS_BAR).innerHTML = "Check or Bet?";
+    } else{
+      alert("You don't have enough money to make the necessary bets!");
+    }
+
 }
 
 function check() {
@@ -249,11 +283,7 @@ function bet(multiplier) {
     document.getElementById(BET1_BUTTON).classList.add("hide");
     document.getElementById(FOLD_BUTTON).classList.add("hide");
 
-    //reset variables
-    tripsQualify = -1;
-    blindQualify = -1;
-    dealerQualify = false;
-    playerFold = false;
+
 }
 
 function handleInput(multiplier){
@@ -263,6 +293,10 @@ function handleInput(multiplier){
   let anteBet =  document.getElementById(ANTE).value;
   let blindBet =  document.getElementById(BLIND).value;
   let tripsBet =  document.getElementById(TRIPS).value;
+  if (anteBet==0){
+    document.getElementById(ANTE).value = 20;
+  }
+  anteBet =  document.getElementById(ANTE).value;
   if (anteBet!=blindBet){
     document.getElementById(BLIND).value = anteBet;
   }
@@ -287,6 +321,7 @@ function getPayout(multiplier) {
   let endTotal = 0;
   let finalMsg = "";
   let payCalcMsg = "";
+  let tMultiplier = 1;
   console.log("Pay Calculation:");
   if (tripsQualify>-1){
     tripsBet = parseInt(tripsBet)*tripsPayoff[tripsQualify];
@@ -326,6 +361,7 @@ function getPayout(multiplier) {
     }
     else{
       endTotal *= -1;
+      tMultiplier = -1;
       finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
     }
   }
@@ -372,6 +408,7 @@ function getPayout(multiplier) {
     }
     else{
       endTotal *= -1;
+      tMultiplier = -1;
       finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
     }
   }
@@ -408,9 +445,11 @@ function getPayout(multiplier) {
     }
     else{
       endTotal *= -1;
+      tMultiplier = -1;
       finalMsg ="You have lost $"+endTotal+"</br>"+payCalcMsg;
     }
   }
+  updateWallet((endTotal*tMultiplier));
   return finalMsg;
 }
 
